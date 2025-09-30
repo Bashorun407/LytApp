@@ -1,14 +1,12 @@
 package com.bash.LytApp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -31,11 +29,7 @@ public class Notification {
     @Column(name = "is_read")
     private Boolean isRead;
 
-    // Constructors
-    public Notification() {
-        this.sentAt = LocalDateTime.now();
-        this.isRead = false;
-    }
+
 
     // Getters and setters...
 //    public Long getId() { return id; }

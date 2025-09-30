@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 public record NotificationDto(
-        Long id,
         User user,
         String type,
         String message,

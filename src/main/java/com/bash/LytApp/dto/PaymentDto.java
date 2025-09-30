@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record PaymentDto(
-        Long id,
         Bill bill,
         User user,
         BigDecimal amountPaid,

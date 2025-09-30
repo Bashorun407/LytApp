@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record BillDto(
-        Long id,
         User user,
         BigDecimal amount,
         LocalDate dueDate,

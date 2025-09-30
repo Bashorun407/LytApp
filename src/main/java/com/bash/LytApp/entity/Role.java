@@ -1,15 +1,11 @@
 package com.bash.LytApp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -27,17 +23,17 @@ public class Role {
         private List<User> users;
 
         // Constructors, Getters, Setters
-//        public Role() {}
-//
-//        public Role(String name) {
-//            this.name = name;
-//        }
+        public Role() {}
+
+        public Role(String name) {
+            this.name = name;
+        }
 
         // Getters and setters...
-//        public Long getId() { return id; }
-//        public void setId(Long id) { this.id = id; }
-//        public String getName() { return name; }
-//        public void setName(String name) { this.name = name; }
-//        public List<User> getUsers() { return users; }
-//        public void setUsers(List<User> users) { this.users = users; }
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public List<User> getUsers() { return users; }
+        public void setUsers(List<User> users) { this.users = users; }
 }
