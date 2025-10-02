@@ -1,16 +1,15 @@
 package com.bash.LytApp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -29,6 +28,7 @@ public class Payment {
     private User user;
 
     @Column(name = "amount_paid", nullable = false)
+    @NotNull
     private BigDecimal amountPaid;
 
     @Column(name = "payment_method")
@@ -48,10 +48,10 @@ public class Payment {
     }
 
     // Constructors
-//    public Payment() {
-//        this.paidAt = LocalDateTime.now();
-//        this.status = PaymentStatus.PENDING;
-//    }
+    public Payment() {
+        this.paidAt = LocalDateTime.now();
+        this.status = PaymentStatus.PENDING;
+    }
 
     // Getters and setters...
 //    public Long getId() { return id; }

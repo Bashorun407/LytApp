@@ -7,14 +7,24 @@ import java.time.LocalDateTime;
 
 public class UserMapper {
     //Maps UserDto to User
-    public static User mapToUser(UserDto userDto){
+    public static User mapToCreateUser(UserDto userDto){
         User user = new User();
 
         user.setFirstName(userDto.firstName());
         user.setLastName(userDto.lastName());
         user.setEmail(userDto.email());
-        user.setCreationDate(userDto.creationDate());
-        user.setModifiedDate(userDto.modifiedDate());
+        user.setCreationDate(LocalDateTime.now());
+        user.setModifiedDate(LocalDateTime.now());
+        user.setRole(userDto.role());
+
+        return user;
+    }
+
+    public static User mapToUpdateUser(User user, UserDto userDto){
+
+        user.setFirstName(userDto.firstName());
+        user.setLastName(userDto.lastName());
+        user.setModifiedDate(LocalDateTime.now());
         user.setRole(userDto.role());
 
         return user;

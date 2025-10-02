@@ -6,7 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -30,6 +29,11 @@ public class Notification {
     private Boolean isRead;
 
 
+    // Set default values in the constructor
+    public Notification() {
+        this.sentAt = LocalDateTime.now();
+        this.isRead = false;
+    }
 
     // Getters and setters...
 //    public Long getId() { return id; }
