@@ -21,6 +21,9 @@ public class Bill {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "meter_number", nullable = false)
+    private Long meterNumber;
+
     @Column(nullable = false)
     private BigDecimal amount;
 

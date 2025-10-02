@@ -18,6 +18,7 @@ class BillTest {
         // When
         Bill bill = new Bill();
         bill.setUser(user);
+        bill.setMeterNumber(234L);
         bill.setAmount(new BigDecimal("150.75"));
         bill.setDueDate(LocalDate.now().plusDays(30));
         bill.setStatus(Bill.BillStatus.UNPAID);
@@ -26,6 +27,7 @@ class BillTest {
         // Then
         assertNotNull(bill);
         assertEquals(user, bill.getUser());
+        assertEquals(234L, bill.getMeterNumber());
         assertEquals(new BigDecimal("150.75"), bill.getAmount());
         assertEquals(Bill.BillStatus.UNPAID, bill.getStatus());
         assertNotNull(bill.getIssuedAt());

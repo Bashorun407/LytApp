@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BillRepository extends JpaRepository<Bill, Long> {
+    List<Long> findByMeterNumber(Long meterNumber);
     List<Bill> findByUserId(Long userId);
     List<Bill> findByUserIdAndStatus(Long userId, Bill.BillStatus status);
     List<Bill> findByStatus(Bill.BillStatus bill);

@@ -8,6 +8,7 @@ public class BillMapper {
     public static BillDto mapToBillDto(Bill bill){
         return new BillDto(
                 bill.getUser(),
+                bill.getMeterNumber(),
                 bill.getAmount(),
                 bill.getDueDate(),
                 bill.getStatus(),
@@ -19,6 +20,7 @@ public class BillMapper {
 
         Bill bill = new Bill();
         bill.setUser(billDto.user());
+        bill.setMeterNumber(billDto.meterNumber());
         bill.setAmount(billDto.amount());
         bill.setDueDate(billDto.dueDate());
         bill.setStatus(billDto.status());
