@@ -57,22 +57,4 @@ public class User {
 //        this.modifiedDate = LocalDateTime.now();
 //    }
 
-    // Getters and setters...
-//    public Long getId() { return id; }
-//    public void setId(Long id) { this.id = id; }
-//    public String getFirstName() { return firstName; }
-//    public void setFirstName(String firstName) { this.firstName = firstName; }
-//    public String getLastName() { return lastName; }
-//    public void setLastName(String lastName) { this.lastName = lastName; }
-//    public String getEmail() { return email; }
-//    public void setEmail(String email) { this.email = email; }
-//    public String getHashedPassword() { return hashedPassword; }
-//    public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
-//    public LocalDateTime getCreationDate() { return creationDate; }
-//    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
-//    public LocalDateTime getModifiedDate() { return modifiedDate; }
-//    public void setModifiedDate(LocalDateTime modifiedDate) { this.modifiedDate = modifiedDate; }
-//    public Role getRole() { return role; }
-//    public void setRole(Role role) { this.role = role; }
-
 }

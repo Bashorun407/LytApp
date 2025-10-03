@@ -6,20 +6,8 @@ import com.bash.LytApp.entity.User;
 import java.time.LocalDateTime;
 
 public class UserMapper {
-    //Maps UserDto to User
-    public static User mapToCreateUser(UserDto userDto){
-        User user = new User();
 
-        user.setFirstName(userDto.firstName());
-        user.setLastName(userDto.lastName());
-        user.setEmail(userDto.email());
-        user.setCreationDate(LocalDateTime.now());
-        user.setModifiedDate(LocalDateTime.now());
-        user.setRole(userDto.role());
-
-        return user;
-    }
-
+    //Maps UserDto to Use
     public static User mapToUpdateUser(User user, UserDto userDto){
 
         user.setFirstName(userDto.firstName());
@@ -40,5 +28,4 @@ public class UserMapper {
                 user.getRole()
         );
     }
-
 }

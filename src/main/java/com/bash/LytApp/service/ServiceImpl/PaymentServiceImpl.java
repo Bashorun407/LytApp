@@ -1,4 +1,121 @@
 package com.bash.LytApp.service.ServiceImpl;
 
-public class PaymentServiceImpl {
+import com.bash.LytApp.dto.PaymentRequestDto;
+import com.bash.LytApp.dto.PaymentResponseDto;
+import com.bash.LytApp.entity.Bill;
+import com.bash.LytApp.entity.Payment;
+import com.bash.LytApp.entity.User;
+import com.bash.LytApp.mapper.PaymentMapper;
+import com.bash.LytApp.repository.BillRepository;
+import com.bash.LytApp.repository.PaymentRepository;
+import com.bash.LytApp.repository.UserRepository;
+import com.bash.LytApp.service.NotificationService;
+import com.bash.LytApp.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class PaymentServiceImpl implements PaymentService {
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
+
+    @Override
+    public PaymentResponseDto processPayment(PaymentRequestDto paymentRequest) {
+        // Validate bill exists
+        Bill bill = billRepository.findById(paymentRequest.billId())
+                .orElseThrow(() -> new RuntimeException("Bill not found with id: " + paymentRequest.billId()));
+
+        // Validate user exists
+        User user = userRepository.findById(bill.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Validate payment amount matches bill amount
+        if (paymentRequest.amount().compareTo(bill.getAmount()) < 0) {
+            throw new RuntimeException("Payment amount does not match bill amount. Expected: " +
+                    bill.getAmount() + ", Provided: " + paymentRequest.amount());
+        }
+
+        // Validate bill is not already paid
+        if (bill.getStatus() == Bill.BillStatus.PAID) {
+            throw new RuntimeException("Bill is already paid");
+        }
+
+        // Process payment (in real app, integrate with payment gateway like Stripe)
+        Payment payment = new Payment();
+        payment.setBill(bill);
+        payment.setUser(user);
+        payment.setAmountPaid(paymentRequest.amount());
+        payment.setPaymentMethod(paymentRequest.paymentMethod());
+        payment.setStatus(Payment.PaymentStatus.COMPLETED);
+        payment.setTransactionId(generateTransactionId());
+        payment.setPaidAt(LocalDateTime.now());
+
+        Payment savedPayment = paymentRepository.save(payment);
+
+        // Update bill status to PAID
+        bill.setStatus(Bill.BillStatus.PAID);
+        billRepository.save(bill);
+
+        // Send payment confirmation notification
+        String message = String.format(
+                "Payment of $%.2f for bill #%d completed successfully. Transaction ID: %s",
+                paymentRequest.amount(),
+                bill.getId(),
+                savedPayment.getTransactionId()
+        );
+        notificationService.sendPaymentNotification(user.getId(), message);
+
+        return PaymentMapper.mapToPaymentDto(savedPayment);
+    }
+
+
+    @Override
+    public PaymentResponseDto getPaymentById(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
+        return PaymentMapper.mapToPaymentDto(payment);
+    }
+
+    @Override
+    public List<PaymentResponseDto> getUserPayments(Long userId) {
+        return paymentRepository.findByUserId(userId).stream()
+                .map(PaymentMapper::mapToPaymentDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PaymentResponseDto> getPaymentsByBillId(Long billId) {
+        return paymentRepository.findByBillId(billId).stream()
+                .map(PaymentMapper::mapToPaymentDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PaymentResponseDto getPaymentByTransactionId(String transactionId) {
+        Payment payment = paymentRepository.findByTransactionId(transactionId)
+                .orElseThrow(() -> new RuntimeException("Payment not found with transaction ID: " + transactionId));
+        return PaymentMapper.mapToPaymentDto(payment);
+    }
+
+    private String generateTransactionId() {
+        return "TXN" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase();
+    }
 }

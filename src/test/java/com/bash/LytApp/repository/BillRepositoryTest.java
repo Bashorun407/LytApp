@@ -15,8 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class BillRepositoryTest {
@@ -76,6 +75,32 @@ public class BillRepositoryTest {
     }
 
     @Test
+    void findByMeterNumber_ExistingUser_ReturnsEmptyList() {
+        // Given
+        Bill bill1 = new Bill();
+        bill1.setUser(testUser);
+        bill1.setMeterNumber("789kjj");
+        bill1.setAmount(new BigDecimal("100.50"));
+        bill1.setDueDate(LocalDate.now().plusDays(15));
+        bill1.setStatus(Bill.BillStatus.UNPAID);
+        entityManager.persistAndFlush(bill1);
+
+        Bill bill2 = new Bill();
+        bill2.setUser(testUser);
+        bill2.setMeterNumber("234OL");
+        bill2.setAmount(new BigDecimal("200.75"));
+        bill2.setDueDate(LocalDate.now().plusDays(30));
+        bill2.setStatus(Bill.BillStatus.UNPAID);
+        entityManager.persistAndFlush(bill2);
+
+        // When
+        List<Bill> bills = billRepository.findByMeterNumber("990GH");
+
+        // Then
+        assertTrue(bills.isEmpty());
+    }
+
+    @Test
     void findByUserId_ExistingUser_ReturnsBills() {
         // Given
         Bill bill1 = new Bill();
@@ -106,6 +131,32 @@ public class BillRepositoryTest {
 
     @Test
     void findByUserId_NonExistingUser_ReturnsEmptyList() {
+
+        // Given
+        Bill bill1 = new Bill();
+        bill1.setUser(testUser);
+        bill1.setMeterNumber("234UT");
+        bill1.setAmount(new BigDecimal("100.50"));
+        bill1.setDueDate(LocalDate.now().plusDays(15));
+        bill1.setStatus(Bill.BillStatus.UNPAID);
+        entityManager.persistAndFlush(bill1);
+
+        Bill bill2 = new Bill();
+        bill2.setUser(testUser);
+        bill2.setMeterNumber("439UM");
+        bill2.setAmount(new BigDecimal("200.75"));
+        bill2.setDueDate(LocalDate.now().plusDays(30));
+        bill2.setStatus(Bill.BillStatus.UNPAID);
+        entityManager.persistAndFlush(bill2);
+
+        // When
+        List<Bill> userBills = billRepository.findByUserId(testUser.getId());
+
+        // Then
+        assertEquals(2, userBills.size());
+        assertEquals("234UT", userBills.get(0).getMeterNumber());
+        assertEquals(new BigDecimal("100.50"), userBills.get(0).getAmount());
+        assertEquals(new BigDecimal("200.75"), userBills.get(1).getAmount());
         // When
         List<Bill> bills = billRepository.findByUserId(999L);
 

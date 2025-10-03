@@ -16,16 +16,4 @@ public class BillMapper {
         );
     }
 
-    public static Bill mapToBill(BillDto billDto){
-
-        Bill bill = new Bill();
-        bill.setUser(billDto.user());
-        bill.setMeterNumber(billDto.meterNumber());
-        bill.setAmount(billDto.amount());
-        bill.setDueDate(billDto.dueDate());
-        bill.setStatus(billDto.status());
-        bill.setIssuedAt(billDto.issuedAt());
-
-        return bill;
-    }
 }

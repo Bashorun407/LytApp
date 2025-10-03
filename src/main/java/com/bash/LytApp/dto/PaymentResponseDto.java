@@ -3,12 +3,11 @@ package com.bash.LytApp.dto;
 import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.entity.Payment;
 import com.bash.LytApp.entity.User;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record PaymentDto(
+public record PaymentResponseDto(
         Bill bill,
         User user,
         BigDecimal amountPaid,

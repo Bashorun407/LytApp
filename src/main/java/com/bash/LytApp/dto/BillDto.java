@@ -16,6 +16,14 @@ public record BillDto(
         Bill.BillStatus status,
         LocalDateTime issuedAt
 ) {
+    public BillDto {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null");
+        }
+    }
     public enum BillStatus {
         PAID, UNPAID, OVERDUE
     }
