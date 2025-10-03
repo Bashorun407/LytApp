@@ -22,7 +22,7 @@ public class Bill {
     private User user;
 
     @Column(name = "meter_number", nullable = false)
-    private Long meterNumber;
+    private String meterNumber;
 
     @Column(nullable = false)
     private BigDecimal amount;

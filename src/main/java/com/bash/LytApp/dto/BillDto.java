@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 public record BillDto(
         User user,
-        Long meterNumber,
+        String meterNumber,
         BigDecimal amount,
         LocalDate dueDate,
         Bill.BillStatus status,

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -49,11 +50,11 @@ public class BillRepositoryTest {
     }
 
     @Test
-    void findByUserId_ExistingUser_ReturnsBills() {
+    void findByMeterNumber_ExistingUser_ReturnsBills() {
         // Given
         Bill bill1 = new Bill();
         bill1.setUser(testUser);
-        bill1.setMeterNumber(345L);
+        bill1.setMeterNumber("789kjj");
         bill1.setAmount(new BigDecimal("100.50"));
         bill1.setDueDate(LocalDate.now().plusDays(15));
         bill1.setStatus(Bill.BillStatus.UNPAID);
@@ -61,7 +62,33 @@ public class BillRepositoryTest {
 
         Bill bill2 = new Bill();
         bill2.setUser(testUser);
-        bill2.setMeterNumber(345L);
+        bill2.setMeterNumber("234OL");
+        bill2.setAmount(new BigDecimal("200.75"));
+        bill2.setDueDate(LocalDate.now().plusDays(30));
+        bill2.setStatus(Bill.BillStatus.UNPAID);
+        entityManager.persistAndFlush(bill2);
+
+        // When
+        List<Bill> bills = billRepository.findByMeterNumber("234OL");
+
+        // Then
+        assertEquals("234OL", bills.get(0).getMeterNumber());
+    }
+
+    @Test
+    void findByUserId_ExistingUser_ReturnsBills() {
+        // Given
+        Bill bill1 = new Bill();
+        bill1.setUser(testUser);
+        bill1.setMeterNumber("234UT");
+        bill1.setAmount(new BigDecimal("100.50"));
+        bill1.setDueDate(LocalDate.now().plusDays(15));
+        bill1.setStatus(Bill.BillStatus.UNPAID);
+        entityManager.persistAndFlush(bill1);
+
+        Bill bill2 = new Bill();
+        bill2.setUser(testUser);
+        bill2.setMeterNumber("439UM");
         bill2.setAmount(new BigDecimal("200.75"));
         bill2.setDueDate(LocalDate.now().plusDays(30));
         bill2.setStatus(Bill.BillStatus.UNPAID);
@@ -72,7 +99,7 @@ public class BillRepositoryTest {
 
         // Then
         assertEquals(2, userBills.size());
-        assertEquals(345L, userBills.get(0).getMeterNumber());
+        assertEquals("234UT", userBills.get(0).getMeterNumber());
         assertEquals(new BigDecimal("100.50"), userBills.get(0).getAmount());
         assertEquals(new BigDecimal("200.75"), userBills.get(1).getAmount());
     }
@@ -91,7 +118,7 @@ public class BillRepositoryTest {
         // Given
         Bill unpaidBill = new Bill();
         unpaidBill.setUser(testUser);
-        unpaidBill.setMeterNumber(987L);
+        unpaidBill.setMeterNumber("987L");
         unpaidBill.setAmount(new BigDecimal("150.00"));
         unpaidBill.setDueDate(LocalDate.now().plusDays(10));
         unpaidBill.setStatus(Bill.BillStatus.UNPAID);
@@ -99,7 +126,7 @@ public class BillRepositoryTest {
 
         Bill paidBill = new Bill();
         paidBill.setUser(testUser);
-        paidBill.setMeterNumber(987L);
+        paidBill.setMeterNumber("987L");
         paidBill.setAmount(new BigDecimal("250.00"));
         paidBill.setDueDate(LocalDate.now().plusDays(5));
         paidBill.setStatus(Bill.BillStatus.PAID);
@@ -114,7 +141,7 @@ public class BillRepositoryTest {
         // Then
         assertEquals(1, unpaidBills.size());
         assertEquals(1, paidBills.size());
-        assertEquals(987L, unpaidBills.get(0).getMeterNumber());
+        assertEquals("987L", unpaidBills.get(0).getMeterNumber());
         assertEquals(Bill.BillStatus.UNPAID, unpaidBills.get(0).getStatus());
         assertEquals(Bill.BillStatus.PAID, paidBills.get(0).getStatus());
     }
@@ -133,21 +160,21 @@ public class BillRepositoryTest {
         // Create bills with different statuses
         Bill bill1 = new Bill();
         bill1.setUser(testUser);
-        bill1.setMeterNumber(998L);
+        bill1.setMeterNumber("998L");
         bill1.setAmount(new BigDecimal("100.00"));
         bill1.setStatus(Bill.BillStatus.UNPAID);
         entityManager.persistAndFlush(bill1);
 
         Bill bill2 = new Bill();
         bill2.setUser(anotherUser);
-        bill2.setMeterNumber(998L);
+        bill2.setMeterNumber("998L");
         bill2.setAmount(new BigDecimal("200.00"));
         bill2.setStatus(Bill.BillStatus.UNPAID);
         entityManager.persistAndFlush(bill2);
 
         Bill bill3 = new Bill();
         bill3.setUser(testUser);
-        bill3.setMeterNumber(998L);
+        bill3.setMeterNumber("998L");
         bill3.setAmount(new BigDecimal("300.00"));
         bill3.setStatus(Bill.BillStatus.PAID);
         entityManager.persistAndFlush(bill3);
