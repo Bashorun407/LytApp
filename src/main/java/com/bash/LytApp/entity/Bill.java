@@ -45,18 +45,4 @@ public class Bill {
         this.issuedAt = LocalDateTime.now();
         this.status = BillStatus.UNPAID;
     }
-
-    // Getters and setters...
-//    public Long getId() { return id; }
-//    public void setId(Long id) { this.id = id; }
-//    public User getUser() { return user; }
-//    public void setUser(User user) { this.user = user; }
-//    public BigDecimal getAmount() { return amount; }
-//    public void setAmount(BigDecimal amount) { this.amount = amount; }
-//    public LocalDate getDueDate() { return dueDate; }
-//    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
-//    public BillStatus getStatus() { return status; }
-//    public void setStatus(BillStatus status) { this.status = status; }
-//    public LocalDateTime getIssuedAt() { return issuedAt; }
-//    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
 }

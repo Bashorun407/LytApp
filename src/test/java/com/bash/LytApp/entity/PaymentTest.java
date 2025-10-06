@@ -1,9 +1,14 @@
 package com.bash.LytApp.entity;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,6 +71,23 @@ class PaymentTest {
         assertNotNull(payment.getPaidAt());
         // Optionally, assert that paidAt is close to now()
         assertTrue(payment.getPaidAt().isBefore(LocalDateTime.now().plusSeconds(1)));
+    }
+
+
+    @Test
+    void paymentAmountPaid_WhenNull_ShouldFailValidation() {
+        Payment payment = new Payment(); // amountPaid is null
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Payment>> violations = validator.validate(payment);
+
+        assertFalse(violations.isEmpty(), "Expected constraint violations when amountPaid is null");
+
+        boolean hasAmountPaidViolation = violations.stream()
+                .anyMatch(v -> v.getPropertyPath().toString().equals("amountPaid"));
+
+        assertTrue(hasAmountPaidViolation, "Expected violation on 'amountPaid' field");
     }
 
 }

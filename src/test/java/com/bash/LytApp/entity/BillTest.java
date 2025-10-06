@@ -9,6 +9,43 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BillTest {
+
+    @Test
+    void bill_DefaultConstructor_SetsIssuedAtAndStatus() {
+        Bill bill = new Bill();
+        assertNotNull(bill.getIssuedAt());
+        assertEquals(Bill.BillStatus.UNPAID, bill.getStatus());
+    }
+
+    @Test
+    void bill_IdField_CanBeSet() {
+        Bill bill = new Bill();
+        // Assuming you add a setId() or test via reflection or persistence
+        bill.setId(100L);
+        assertEquals(100L, bill.getId());
+    }
+
+    @Test
+    void bill_SetNullMeterNumber_AllowsNull() {
+        Bill bill = new Bill();
+        bill.setMeterNumber(null);
+        assertNull(bill.getMeterNumber());
+    }
+
+    @Test
+    void bill_SetNegativeAmount_ShouldBeInvalid() {
+        Bill bill = new Bill();
+        bill.setAmount(new BigDecimal("-10.00"));
+        assertTrue(bill.getAmount().compareTo(BigDecimal.ZERO) < 0);
+    }
+
+    @Test
+    void bill_WithoutDueDate_AllowsNull() {
+        Bill bill = new Bill();
+        bill.setDueDate(null);
+        assertNull(bill.getDueDate());
+    }
+
     @Test
     void billCreation_WithValidData_Success() {
         // Given

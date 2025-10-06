@@ -1,6 +1,8 @@
 package com.bash.LytApp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,15 +23,19 @@ public class User {
     private Long id;
 
     @Column(name = "first_name", nullable = false)
+    @NotBlank(message = "First name is required")
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
+    @NotNull(message = "Last name is required")
     private String lastName;
 
     @Column(nullable = false, unique = true)
+    @NotNull(message = "Email is required")
     private String email;
 
     @Column(name = "hashed_password", nullable = false)
+    @NotNull(message = "Password is required")
     private String hashedPassword;
 
     @Column(name = "creation_date")
