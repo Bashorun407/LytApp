@@ -51,6 +51,7 @@ public class BillServiceImpl implements BillService {
 
         Bill bill = new Bill();
         bill.setUser(user);
+        bill.setMeterNumber(billDto.meterNumber());
         bill.setAmount(billDto.amount());
         bill.setDueDate(billDto.dueDate());
         bill.setStatus(Bill.BillStatus.UNPAID);

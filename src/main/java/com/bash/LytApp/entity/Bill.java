@@ -1,6 +1,7 @@
 package com.bash.LytApp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class Bill {
     private User user;
 
     @Column(name = "meter_number", nullable = false)
+    @NotNull(message = "Meter Number can not be null")
     private String meterNumber;
 
     @Column(nullable = false)

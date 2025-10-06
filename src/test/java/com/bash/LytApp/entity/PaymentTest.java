@@ -31,6 +31,7 @@ class PaymentTest {
         payment.setPaymentMethod("credit_card");
         payment.setStatus(Payment.PaymentStatus.COMPLETED);
         payment.setTransactionId("TXN123456789");
+        payment.setToken("1234421434");
         payment.setPaidAt(LocalDateTime.now());
 
         // Then
@@ -41,6 +42,7 @@ class PaymentTest {
         assertEquals("credit_card", payment.getPaymentMethod());
         assertEquals(Payment.PaymentStatus.COMPLETED, payment.getStatus());
         assertEquals("TXN123456789", payment.getTransactionId());
+        assertEquals("1234421434", payment.getToken());
     }
 
     @Test
@@ -63,6 +65,20 @@ class PaymentTest {
         // Then
         assertNotNull(payment.getTransactionId());
         assertFalse(payment.getTransactionId().isEmpty());
+    }
+
+    @Test
+    void paymentToken_Unique_Generated(){
+        //Given
+        Payment payment = new Payment();
+
+        //When
+        payment.setToken("9876556789876");
+
+        //Then
+        assertNotNull(payment.getToken());
+        assertFalse(payment.getToken().isEmpty());
+
     }
 
     @Test

@@ -40,6 +40,9 @@ public class Payment {
     @Column(name = "transaction_id", unique = true)
     private String transactionId;
 
+    @Column(name= "token", unique = true)
+    private String token;
+
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 

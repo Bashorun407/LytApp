@@ -48,6 +48,7 @@ public class PaymentRepositoryTest {
         // Create bill
         testBill = new Bill();
         testBill.setUser(testUser);
+        testBill.setMeterNumber("987678998778");
         testBill.setAmount(new BigDecimal("150.00"));
         testBill.setDueDate(LocalDate.now().plusDays(15));
         testBill.setStatus(Bill.BillStatus.UNPAID);
@@ -64,6 +65,7 @@ public class PaymentRepositoryTest {
         payment.setPaymentMethod("credit_card");
         payment.setStatus(Payment.PaymentStatus.COMPLETED);
         payment.setTransactionId("TXN001");
+        payment.setToken("987656789122");
         entityManager.persistAndFlush(payment);
 
         // When
@@ -72,6 +74,7 @@ public class PaymentRepositoryTest {
         // Then
         assertEquals(1, userPayments.size());
         assertEquals("TXN001", userPayments.get(0).getTransactionId());
+        assertEquals("987656789122", userPayments.get(0).getToken());
         assertEquals(Payment.PaymentStatus.COMPLETED, userPayments.get(0).getStatus());
     }
 
@@ -85,6 +88,7 @@ public class PaymentRepositoryTest {
         payment.setPaymentMethod("debit_card");
         payment.setStatus(Payment.PaymentStatus.COMPLETED);
         payment.setTransactionId("TXN002");
+        payment.setToken("987656781129");
         entityManager.persistAndFlush(payment);
 
         // When
@@ -106,6 +110,7 @@ public class PaymentRepositoryTest {
         payment.setPaymentMethod("bank_transfer");
         payment.setStatus(Payment.PaymentStatus.COMPLETED);
         payment.setTransactionId("UNIQUE_TXN_123");
+        payment.setToken("987656789143");
         entityManager.persistAndFlush(payment);
 
         // When
@@ -127,6 +132,7 @@ public class PaymentRepositoryTest {
         payment.setPaymentMethod("credit_card");
         payment.setStatus(Payment.PaymentStatus.PENDING);
         payment.setTransactionId("NEW_TXN_001");
+        payment.setToken("987656785569");
 
         // When
         Payment savedPayment = paymentRepository.save(payment);
@@ -134,6 +140,7 @@ public class PaymentRepositoryTest {
         // Then
         assertNotNull(savedPayment.getId());
         assertEquals("NEW_TXN_001", savedPayment.getTransactionId());
+        assertEquals("987656785569", savedPayment.getToken());
         assertEquals(Payment.PaymentStatus.PENDING, savedPayment.getStatus());
         assertEquals(testUser.getId(), savedPayment.getUser().getId());
         assertEquals(testBill.getId(), savedPayment.getBill().getId());
