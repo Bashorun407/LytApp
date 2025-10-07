@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         return UserMapper.mapToUserDto(user);
     }
 
@@ -74,8 +74,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) {
+
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        // Check if email is being changed and if it's already taken
+        if (!existingUser.getEmail().equals(userDto.email()) &&
+                userRepository.existsByEmail(userDto.email())) {
+            throw new RuntimeException("Email already exists: " + userDto.email());
+        }
 
         User updatedUser = userRepository.save(UserMapper.mapToUpdateUser(existingUser, userDto));
         return UserMapper.mapToUserDto(updatedUser);

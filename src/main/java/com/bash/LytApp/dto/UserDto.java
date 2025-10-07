@@ -6,9 +6,11 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 public record UserDto(
+        Long id,
         String firstName,
         String lastName,
         String email,
+        String hashedPassword,
         LocalDateTime creationDate,
         LocalDateTime modifiedDate,
         Role role
@@ -22,6 +24,9 @@ public record UserDto(
         }
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+        if (hashedPassword == null || hashedPassword.isBlank()){
+            throw new IllegalArgumentException("Password cannot be null or empty");
         }
     }
 }

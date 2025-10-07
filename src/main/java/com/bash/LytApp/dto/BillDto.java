@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record BillDto(
+        Long id,
         User user,
         String meterNumber,
         BigDecimal amount,

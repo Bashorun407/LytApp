@@ -20,9 +20,11 @@ public class UserMapper {
     //Maps User to UserDto
     public static UserDto mapToUserDto(User user){
         return new UserDto(
+                user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
+                user.getHashedPassword(),
                 user.getCreationDate(),
                 user.getModifiedDate(),
                 user.getRole()

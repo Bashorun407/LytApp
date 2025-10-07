@@ -3,7 +3,7 @@ package com.bash.LytApp.dto;
 import java.math.BigDecimal;
 
 public record PaymentRequestDto(
-        Long billId,
+        Long id,
         BigDecimal amount,
         String paymentMethod,
         String cardNumber,
@@ -11,7 +11,7 @@ public record PaymentRequestDto(
         String cvv
 ) {
     public PaymentRequestDto {
-        if (billId == null) {
+        if (id == null) {
             throw new IllegalArgumentException("Bill ID cannot be null");
         }
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {

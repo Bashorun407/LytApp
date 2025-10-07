@@ -40,8 +40,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDto processPayment(PaymentRequestDto paymentRequest) {
         // Validate bill exists
-        Bill bill = billRepository.findById(paymentRequest.billId())
-                .orElseThrow(() -> new RuntimeException("Bill not found with id: " + paymentRequest.billId()));
+        Bill bill = billRepository.findById(paymentRequest.id())
+                .orElseThrow(() -> new RuntimeException("Bill not found with id: " + paymentRequest.id()));
 
         // Validate user exists
         User user = userRepository.findById(bill.getUser().getId())
