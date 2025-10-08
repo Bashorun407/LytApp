@@ -93,8 +93,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<BillDto> getBillsByStatus(String status) {
-        try {
+    public List<BillDto> getBillsByStatus(String status) {try {
             Bill.BillStatus billStatus = Bill.BillStatus.valueOf(status.toUpperCase());
             return billRepository.findByStatus(billStatus).stream()
                     .map(BillMapper::mapToBillDto)
@@ -103,4 +102,5 @@ public class BillServiceImpl implements BillService {
             throw new RuntimeException("Invalid bill status: " + status);
         }
     }
+
 }

@@ -1,8 +1,10 @@
 package com.bash.LytApp.service.ServiceImpl;
 
 import com.bash.LytApp.dto.NotificationDto;
+import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.entity.Notification;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.exception.ResourceNotFoundException;
 import com.bash.LytApp.mapper.NotificationMapper;
 import com.bash.LytApp.repository.NotificationRepository;
 import com.bash.LytApp.repository.UserRepository;
@@ -63,15 +65,19 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendPaymentNotification(Long userId, String message) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + userId));
         createNotification(new NotificationDto(
-                null, "PAYMENT_CONFIRMATION", message, LocalDateTime.now(), false
+                user, "PAYMENT_CONFIRMATION", message, LocalDateTime.now(), false
         ));
     }
 
     @Override
     public void sendBillNotification(Long userId, String message) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + userId));
         createNotification(new NotificationDto(
-                 null, "BILL_ALERT", message, LocalDateTime.now(), false
+                 user, "BILL_ALERT", message, LocalDateTime.now(), false
         ));
     }
 
