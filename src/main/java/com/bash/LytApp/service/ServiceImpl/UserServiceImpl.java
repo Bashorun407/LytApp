@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Get or create default role
-        Role userRole = roleRepository.findByName("USER")
+        Role userRole = roleRepository.findByName(userDto.role().getName())
                 .orElseGet(() -> {
                     Role newRole = new Role();
                     newRole.setName("USER");
