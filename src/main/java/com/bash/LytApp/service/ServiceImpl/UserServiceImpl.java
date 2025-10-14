@@ -1,5 +1,6 @@
 package com.bash.LytApp.service.ServiceImpl;
 
+import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
@@ -44,31 +45,24 @@ public class UserServiceImpl implements UserService {
     }
     //CREATE USER
     @Override
-    public UserDto createUser(UserDto  userDto) {
+    public UserDto createUser(UserCreateDto userCreateDto) {
 
         // Check if email already exists
-        if (userRepository.existsByEmail(userDto.email())) {
-            throw new RuntimeException("Email already exists: " + userDto.email());
+        if (userRepository.existsByEmail(userCreateDto.email())) {
+            throw new RuntimeException("Email already exists: " + userCreateDto.email());
         }
 
         // Get or create default role
-        Role userRole = roleRepository.findByName(userDto.role().getName())
+        Role userRole = roleRepository.findByName(userCreateDto.role())
                 .orElseGet(() -> {
                     Role newRole = new Role();
                     newRole.setName("USER");
                     return roleRepository.save(newRole);
                 });
 
-            User user = new User();
-
-            user.setFirstName(userDto.firstName());
-            user.setLastName(userDto.lastName());
-            user.setEmail(userDto.email());
-            user.setCreationDate(LocalDateTime.now());
-            user.setModifiedDate(LocalDateTime.now());
-
+        User user = new User();
         user.setRole(userRole);
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(UserMapper.mapToCreateUser(user, userCreateDto));
         return UserMapper.mapToUserDto(savedUser);
     }
 

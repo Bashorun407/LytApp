@@ -1,5 +1,6 @@
 package com.bash.LytApp.controller;
 
+import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserCreateDto userCreateDto) {
         try {
-            UserDto createdUser = userService.createUser(userDto);
+            UserDto createdUser = userService.createUser(userCreateDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

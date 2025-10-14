@@ -13,7 +13,8 @@ public record UserDto(
         String hashedPassword,
         LocalDateTime creationDate,
         LocalDateTime modifiedDate,
-        Role role
+        //Role role
+        String role
 ) {
     public UserDto {
         if (firstName == null || firstName.isBlank()) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public record RoleDto(
        Long id,
-       String name,
-       List<User> users
+       String name
+       //List<User> users
 ) {
 }

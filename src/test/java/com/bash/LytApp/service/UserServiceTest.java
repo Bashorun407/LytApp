@@ -1,5 +1,6 @@
 package com.bash.LytApp.service;
 
+import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
@@ -35,6 +36,7 @@ public class UserServiceTest {
     private User testUser;
     private Role testRole;
     private UserDto testUserDto;
+    private UserCreateDto testUserCreateDto;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +56,7 @@ public class UserServiceTest {
 
         testUserDto = new UserDto(
                 1L, "John", "Doe", "john.doe@example.com",
-                "hashedPassword", LocalDateTime.now(), LocalDateTime.now(), testRole
+                "hashedPassword", LocalDateTime.now(), LocalDateTime.now(), "USER"
         );
     }
 
@@ -112,9 +114,9 @@ public class UserServiceTest {
     @Test
     void createUser_WithValidData_ReturnsCreatedUser() {
         // Given
-        UserDto newUserDto = new UserDto(
-                null, "Alice", "Johnson", "alice@example.com",
-                "newPassword", null, null, testRole
+        UserCreateDto newUserDto = new UserCreateDto(
+                "Alice", "Johnson", "alice@example.com",
+                "newPassword",  "USER"
         );
 
         when(userRepository.existsByEmail("alice@example.com")).thenReturn(false);
@@ -144,9 +146,8 @@ public class UserServiceTest {
     @Test
     void createUser_WithExistingEmail_ThrowsException() {
         // Given
-        UserDto newUserDto = new UserDto(
-                null, "Alice", "Johnson", "existing@example.com",
-                "password", null, null, testRole
+        UserCreateDto newUserDto = new UserCreateDto("Alice", "Johnson", "existing@example.com",
+                "password",  "USER"
         );
 
         when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
@@ -162,36 +163,53 @@ public class UserServiceTest {
     @Test
     void createUser_WhenRoleNotExists_CreatesNewRole() {
         // Given
-        UserDto newUserDto = new UserDto(
-                null, "Bob", "Brown", "bob@example.com",
-                "password", null, null, null
+        // Arrange
+        UserCreateDto userCreateDto = new UserCreateDto(
+                "John",
+                "Doe",
+                "john.doe@example.com",
+                "hashedPassword",
+                "Newbie" // This must match the argument in your stubbing
         );
 
-        Role newRole = new Role();
-        newRole.setId(2L);
-        newRole.setName("USER");
+        // Simulate no user exists with this email
+        when(userRepository.existsByEmail("john.doe@example.com")).thenReturn(false);
 
-        when(userRepository.existsByEmail("bob@example.com")).thenReturn(false);
-        when(roleRepository.findByName("USER")).thenReturn(Optional.empty());
-        when(roleRepository.save(any(Role.class))).thenReturn(newRole);
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
-            user.setId(3L);
-            user.setFirstName("Bob");
-            user.setLastName("Brown");
-            user.setEmail("bob@example.com");
-            user.setHashedPassword("hashedPassword");
-            return user;
-        });
+        // Simulate roleRepository returns empty, so a new role should be created
+        when(roleRepository.findByName("Newbie")).thenReturn(Optional.empty());
 
-        // When
-        UserDto result = userService.createUser(newUserDto);
+        // Simulate saving a new role
+        Role savedRole = new Role();
+        savedRole.setId(1L);
+        savedRole.setName("USER");
+        when(roleRepository.save(any(Role.class))).thenReturn(savedRole);
 
-        // Then
+        // Simulate saving the new user
+        User savedUser = new User();
+        savedUser.setId(1L);
+        savedUser.setFirstName("John");
+        savedUser.setLastName("Doe");
+        savedUser.setEmail("john.doe@example.com");
+        savedUser.setHashedPassword("hashedPassword");
+        savedUser.setRole(savedRole);
+        savedUser.setCreationDate(LocalDateTime.now());
+        savedUser.setModifiedDate(LocalDateTime.now());
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+        // Act
+        UserDto result = userService.createUser(userCreateDto);
+
+        // Assert
         assertNotNull(result);
-        assertEquals("Bob", result.firstName());
-        verify(roleRepository, times(1)).findByName("USER");
-        verify(roleRepository, times(1)).save(any(Role.class));
+        assertEquals("John", result.firstName());
+        assertEquals("Doe", result.lastName());
+        assertEquals("john.doe@example.com", result.email());
+        assertEquals("USER", result.role());
+
+        // Verify interactions
+        verify(roleRepository).findByName("Newbie");
+        verify(roleRepository).save(any(Role.class));
+        verify(userRepository).save(any(User.class));
     }
 
 
@@ -200,7 +218,7 @@ public class UserServiceTest {
         // Given
         UserDto updateDto = new UserDto(
                 1L, "Johnny", "Doey", "johnny.doey@example.com",
-                "hashedPassword", null, null, testRole  // Changed from testRole to "USER"
+                "hashedPassword", null, null, "USER"  // Changed from testRole to "USER"
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
@@ -222,7 +240,7 @@ public class UserServiceTest {
         // Given
         UserDto updateDto = new UserDto(
                 1L, "John", "Doe", "existing@example.com",
-                "password", null, null, testRole
+                "password", null, null, "USER"
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
