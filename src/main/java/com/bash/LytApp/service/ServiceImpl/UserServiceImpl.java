@@ -79,6 +79,16 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already exists: " + userUpdateDto.email());
         }
 
+        //Setting new role
+        if(!userUpdateDto.role().isBlank()){
+            roleRepository.findByName(userUpdateDto.role())
+                            .orElseGet(()->{
+                                Role newRole = new Role(userUpdateDto.role());
+                                return roleRepository.save(newRole);
+                                    }
+                            );
+        }
+
         User updatedUser = userRepository.save(UserMapper.mapToUpdateUser(existingUser, userUpdateDto));
         return UserMapper.mapToUserDto(updatedUser);
     }

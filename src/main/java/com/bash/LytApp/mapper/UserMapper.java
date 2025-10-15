@@ -28,7 +28,6 @@ public class UserMapper {
         user.setLastName(userUpdateDto.lastName());
         user.setHashedPassword(userUpdateDto.hashedPassword());
         user.setModifiedDate(LocalDateTime.now());
-        user.setRole(new Role(userUpdateDto.role()));
 
         return user;
     }
