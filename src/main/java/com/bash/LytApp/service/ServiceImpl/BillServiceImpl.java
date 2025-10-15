@@ -46,8 +46,8 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public BillDto createBill(BillDto billDto) {
-        User user = userRepository.findById(billDto.user().getId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + billDto.user().getId()));
+        User user = userRepository.findById(billDto.userId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + billDto.userId()));
 
         Bill bill = new Bill();
         bill.setUser(user);

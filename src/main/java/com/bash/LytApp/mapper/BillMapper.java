@@ -7,8 +7,8 @@ public class BillMapper {
 
     public static BillDto mapToBillDto(Bill bill){
         return new BillDto(
-                bill.getId(),
-                bill.getUser(),
+
+                bill.getUser().getId(),
                 bill.getMeterNumber(),
                 bill.getAmount(),
                 bill.getDueDate(),

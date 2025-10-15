@@ -58,8 +58,7 @@ public class BillServiceTest {
         testBill.setStatus(Bill.BillStatus.UNPAID);
         testBill.setIssuedAt(LocalDateTime.now());
 
-        testBillDto = new BillDto(
-                1L, testUser, "John Doe", new BigDecimal("150.75"),
+        testBillDto = new BillDto(testUser.getId(), "John Doe", new BigDecimal("150.75"),
                 LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
         );
     }
@@ -95,7 +94,7 @@ public class BillServiceTest {
 
         // Then
         assertNotNull(result);
-        assertEquals(1L, result.id());
+        //assertEquals(1L, result.id());
         assertEquals(new BigDecimal("150.75"), result.amount());
         assertEquals("UNPAID", result.status().toString());
         verify(billRepository, times(1)).findById(1L);
@@ -105,7 +104,7 @@ public class BillServiceTest {
     void createBill_WithValidData_ReturnsCreatedBill() {
         // Given
         BillDto newBillDto = new BillDto(
-                null, testUser, "John Doe", new BigDecimal("99.99"),
+                testUser.getId(), "John Doe", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
 
@@ -132,7 +131,7 @@ public class BillServiceTest {
     void createBill_WithInvalidUser_ThrowsException() {
         // Given
         BillDto newBillDto = new BillDto(
-                24L, testUser, "3456787654", new BigDecimal("99.99"),
+                 testUser.getId(), "3456787654", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
 

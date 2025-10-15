@@ -3,7 +3,6 @@ package com.bash.LytApp.mapper;
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.dto.UserUpdateDto;
-import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
 
 import java.time.LocalDateTime;
