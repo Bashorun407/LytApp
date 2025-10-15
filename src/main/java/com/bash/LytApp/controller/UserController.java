@@ -2,6 +2,7 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
+import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,7 +60,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserUpdateDto userDto) {
         try {
             UserDto updatedUser = userService.updateUser(id, userDto);
             return ResponseEntity.ok(updatedUser);

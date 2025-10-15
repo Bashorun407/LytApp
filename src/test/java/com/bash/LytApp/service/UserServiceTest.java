@@ -2,6 +2,7 @@ package com.bash.LytApp.service;
 
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
+import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.repository.RoleRepository;
@@ -216,9 +217,9 @@ public class UserServiceTest {
     @Test
     void updateUser_WithValidData_ReturnsUpdatedUser() {
         // Given
-        UserDto updateDto = new UserDto(
+        UserUpdateDto updateDto = new UserUpdateDto(
                 "Johnny", "Doey", "johnny.doey@example.com",
-                "hashedPassword", null, null, "USER"  // Changed from testRole to "USER"
+                "hashedPassword", "USER"  // Changed from testRole to "USER"
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
@@ -238,9 +239,9 @@ public class UserServiceTest {
     @Test
     void updateUser_WithExistingEmail_ThrowsException() {
         // Given
-        UserDto updateDto = new UserDto(
+        UserUpdateDto updateDto = new UserUpdateDto(
                 "John", "Doe", "existing@example.com",
-                "password", null, null, "USER"
+                "password",  "USER"
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));

@@ -2,6 +2,7 @@ package com.bash.LytApp.service.ServiceImpl;
 
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
+import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.exception.ResourceNotFoundException;
@@ -67,18 +68,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public UserDto updateUser(Long id, UserUpdateDto userUpdateDto) {
 
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         // Check if email is being changed and if it's already taken
-        if (!existingUser.getEmail().equals(userDto.email()) &&
-                userRepository.existsByEmail(userDto.email())) {
-            throw new RuntimeException("Email already exists: " + userDto.email());
+        if (!existingUser.getEmail().equals(userUpdateDto.email()) &&
+                userRepository.existsByEmail(userUpdateDto.email())) {
+            throw new RuntimeException("Email already exists: " + userUpdateDto.email());
         }
 
-        User updatedUser = userRepository.save(UserMapper.mapToUpdateUser(existingUser, userDto));
+        User updatedUser = userRepository.save(UserMapper.mapToUpdateUser(existingUser, userUpdateDto));
         return UserMapper.mapToUserDto(updatedUser);
     }
 

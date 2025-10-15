@@ -2,14 +2,15 @@ package com.bash.LytApp.dto;
 
 import java.time.LocalDateTime;
 
-public record UserCreateDto(
+public record UserUpdateDto(
+
         String firstName,
         String lastName,
         String email,
         String hashedPassword,
         String role
 ) {
-    public UserCreateDto {
+    public UserUpdateDto {
         if (firstName == null || firstName.isBlank()) {
             throw new IllegalArgumentException("First name cannot be null or empty");
         }

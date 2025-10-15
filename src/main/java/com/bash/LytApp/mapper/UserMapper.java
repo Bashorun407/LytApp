@@ -2,6 +2,7 @@ package com.bash.LytApp.mapper;
 
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
+import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
 
@@ -21,12 +22,13 @@ public class UserMapper {
     }
 
     //Maps UserDto to Use
-    public static User mapToUpdateUser(User user, UserDto userDto){
+    public static User mapToUpdateUser(User user, UserUpdateDto userUpdateDto){
 
-        user.setFirstName(userDto.firstName());
-        user.setLastName(userDto.lastName());
+        user.setFirstName(userUpdateDto.firstName());
+        user.setLastName(userUpdateDto.lastName());
+        user.setHashedPassword(userUpdateDto.hashedPassword());
         user.setModifiedDate(LocalDateTime.now());
-        user.setRole(new Role(userDto.role()));
+        user.setRole(new Role(userUpdateDto.role()));
 
         return user;
     }
