@@ -33,7 +33,7 @@ public class UserMapper {
     //Maps User to UserDto
     public static UserDto mapToUserDto(User user){
         return new UserDto(
-                user.getId(),
+                //user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),

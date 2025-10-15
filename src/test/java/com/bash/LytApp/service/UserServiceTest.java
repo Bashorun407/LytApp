@@ -55,7 +55,7 @@ public class UserServiceTest {
         testUser.setRole(testRole);
 
         testUserDto = new UserDto(
-                1L, "John", "Doe", "john.doe@example.com",
+                "John", "Doe", "john.doe@example.com",
                 "hashedPassword", LocalDateTime.now(), LocalDateTime.now(), "USER"
         );
     }
@@ -217,7 +217,7 @@ public class UserServiceTest {
     void updateUser_WithValidData_ReturnsUpdatedUser() {
         // Given
         UserDto updateDto = new UserDto(
-                1L, "Johnny", "Doey", "johnny.doey@example.com",
+                "Johnny", "Doey", "johnny.doey@example.com",
                 "hashedPassword", null, null, "USER"  // Changed from testRole to "USER"
         );
 
@@ -239,7 +239,7 @@ public class UserServiceTest {
     void updateUser_WithExistingEmail_ThrowsException() {
         // Given
         UserDto updateDto = new UserDto(
-                1L, "John", "Doe", "existing@example.com",
+                "John", "Doe", "existing@example.com",
                 "password", null, null, "USER"
         );
 

@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 public record UserDto(
-        Long id,
+        //Long id,
         String firstName,
         String lastName,
         String email,
