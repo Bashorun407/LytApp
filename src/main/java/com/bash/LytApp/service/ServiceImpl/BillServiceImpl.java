@@ -74,7 +74,9 @@ public class BillServiceImpl implements BillService {
                 .orElseThrow(() -> new RuntimeException("Bill not found with id: " + billId));
 
         try {
+            //Here the bill status' new value is assigned.
             Bill.BillStatus newStatus = Bill.BillStatus.valueOf(status.toUpperCase());
+            //Here the bill's status is updated.
             bill.setStatus(newStatus);
 
             Bill updatedBill = billRepository.save(bill);
