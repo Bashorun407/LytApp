@@ -2,6 +2,7 @@ package com.bash.LytApp.service.ServiceImpl;
 
 
 import com.bash.LytApp.dto.BillDto;
+import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.mapper.BillMapper;
@@ -31,21 +32,21 @@ public class BillServiceImpl implements BillService {
     private NotificationService notificationService;
 
     @Override
-    public List<BillDto> getUserBills(Long userId) {
+    public List<BillResponseDto> getUserBills(Long userId) {
         return billRepository.findByUserId(userId).stream()
-                .map(BillMapper::mapToBillDto)
+                .map(BillMapper::mapToBillResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BillDto getBillById(Long id) {
+    public BillResponseDto getBillById(Long id) {
         Bill bill = billRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bill not found with id: " + id));
-        return BillMapper.mapToBillDto(bill);
+        return BillMapper.mapToBillResponseDto(bill);
     }
 
     @Override
-    public BillDto createBill(BillDto billDto) {
+    public BillResponseDto createBill(BillDto billDto) {
         User user = userRepository.findById(billDto.userId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + billDto.userId()));
 
@@ -64,11 +65,11 @@ public class BillServiceImpl implements BillService {
                 billDto.amount(), billDto.dueDate());
         notificationService.sendBillNotification(user.getId(), message);
 
-        return BillMapper.mapToBillDto(savedBill);
+        return BillMapper.mapToBillResponseDto(savedBill);
     }
 
     @Override
-    public BillDto updateBillStatus(Long billId, String status) {
+    public BillResponseDto updateBillStatus(Long billId, String status) {
         Bill bill = billRepository.findById(billId)
                 .orElseThrow(() -> new RuntimeException("Bill not found with id: " + billId));
 
@@ -77,26 +78,26 @@ public class BillServiceImpl implements BillService {
             bill.setStatus(newStatus);
 
             Bill updatedBill = billRepository.save(bill);
-            return BillMapper.mapToBillDto(updatedBill);
+            return BillMapper.mapToBillResponseDto(updatedBill);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid bill status: " + status);
         }
     }
 
     @Override
-    public List<BillDto> getOverdueBills() {
+    public List<BillResponseDto> getOverdueBills() {
         LocalDate today = LocalDate.now();
         return billRepository.findByStatus(Bill.BillStatus.UNPAID).stream()
                 .filter(bill -> bill.getDueDate().isBefore(today))
-                .map(BillMapper::mapToBillDto)
+                .map(BillMapper::mapToBillResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<BillDto> getBillsByStatus(String status) {try {
+    public List<BillResponseDto> getBillsByStatus(String status) {try {
             Bill.BillStatus billStatus = Bill.BillStatus.valueOf(status.toUpperCase());
             return billRepository.findByStatus(billStatus).stream()
-                    .map(BillMapper::mapToBillDto)
+                    .map(BillMapper::mapToBillResponseDto)
                     .collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid bill status: " + status);

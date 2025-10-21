@@ -1,6 +1,7 @@
 package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.BillDto;
+import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,9 @@ public class BillController {
     private BillService billService;
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BillDto>> getUserBills(@PathVariable Long userId) {
+    public ResponseEntity<List<BillResponseDto>> getUserBills(@PathVariable Long userId) {
         try {
-            List<BillDto> bills = billService.getUserBills(userId);
+            List<BillResponseDto> bills = billService.getUserBills(userId);
             return ResponseEntity.ok(bills);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -28,9 +29,9 @@ public class BillController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BillDto> getBillById(@PathVariable Long id) {
+    public ResponseEntity<BillResponseDto> getBillById(@PathVariable Long id) {
         try {
-            BillDto bill = billService.getBillById(id);
+            BillResponseDto bill = billService.getBillById(id);
             return ResponseEntity.ok(bill);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -38,9 +39,9 @@ public class BillController {
     }
 
     @PostMapping
-    public ResponseEntity<BillDto> createBill(@RequestBody BillDto billDto) {
+    public ResponseEntity<BillResponseDto> createBill(@RequestBody BillDto billDto) {
         try {
-            BillDto createdBill = billService.createBill(billDto);
+            BillResponseDto createdBill = billService.createBill(billDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdBill);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
@@ -48,11 +49,11 @@ public class BillController {
     }
 
     @PutMapping("/{billId}/status")
-    public ResponseEntity<BillDto> updateBillStatus(
+    public ResponseEntity<BillResponseDto> updateBillStatus(
             @PathVariable Long billId,
             @RequestParam String status) {
         try {
-            BillDto updatedBill = billService.updateBillStatus(billId, status);
+            BillResponseDto updatedBill = billService.updateBillStatus(billId, status);
             return ResponseEntity.ok(updatedBill);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
@@ -60,9 +61,9 @@ public class BillController {
     }
 
     @GetMapping("/overdue")
-    public ResponseEntity<List<BillDto>> getOverdueBills() {
+    public ResponseEntity<List<BillResponseDto>> getOverdueBills() {
         try {
-            List<BillDto> overdueBills = billService.getOverdueBills();
+            List<BillResponseDto> overdueBills = billService.getOverdueBills();
             return ResponseEntity.ok(overdueBills);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -70,9 +71,9 @@ public class BillController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<BillDto>> getBillsByStatus(@PathVariable String status) {
+    public ResponseEntity<List<BillResponseDto>> getBillsByStatus(@PathVariable String status) {
         try {
-            List<BillDto> bills = billService.getBillsByStatus(status);
+            List<BillResponseDto> bills = billService.getBillsByStatus(status);
             return ResponseEntity.ok(bills);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

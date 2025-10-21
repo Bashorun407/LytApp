@@ -1,15 +1,16 @@
 package com.bash.LytApp.service;
 
 import com.bash.LytApp.dto.BillDto;
+import com.bash.LytApp.dto.BillResponseDto;
 
 import java.util.List;
 
 public interface BillService {
 
-    List<BillDto> getUserBills(Long userId);
-    BillDto getBillById(Long id);
-    BillDto createBill(BillDto billDto);
-    BillDto updateBillStatus(Long billId, String status);
-    List<BillDto> getOverdueBills();
-    List<BillDto> getBillsByStatus(String status);
+    List<BillResponseDto> getUserBills(Long userId);
+    BillResponseDto getBillById(Long id);
+    BillResponseDto createBill(BillDto billDto);
+    BillResponseDto updateBillStatus(Long billId, String status);
+    List<BillResponseDto> getOverdueBills();
+    List<BillResponseDto> getBillsByStatus(String status);
 }

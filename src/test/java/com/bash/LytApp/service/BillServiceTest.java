@@ -1,6 +1,7 @@
 package com.bash.LytApp.service;
 
 import com.bash.LytApp.dto.BillDto;
+import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.repository.BillRepository;
@@ -75,7 +76,7 @@ public class BillServiceTest {
         when(billRepository.findByUserId(1L)).thenReturn(Arrays.asList(testBill, bill2));
 
         // When
-        List<BillDto> bills = billService.getUserBills(1L);
+        List<BillResponseDto> bills = billService.getUserBills(1L);
 
         // Then
         assertEquals(2, bills.size());
@@ -90,7 +91,7 @@ public class BillServiceTest {
         when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
 
         // When
-        BillDto result = billService.getBillById(1L);
+        BillResponseDto result = billService.getBillById(1L);
 
         // Then
         assertNotNull(result);
@@ -117,7 +118,7 @@ public class BillServiceTest {
         doNothing().when(notificationService).sendBillNotification(anyLong(), anyString());
 
         // When
-        BillDto result = billService.createBill(newBillDto);
+        BillResponseDto result = billService.createBill(newBillDto);
 
         // Then
         assertNotNull(result);
@@ -151,7 +152,7 @@ public class BillServiceTest {
         when(billRepository.save(any(Bill.class))).thenReturn(testBill);
 
         // When
-        BillDto result = billService.updateBillStatus(1L, "PAID");
+        BillResponseDto result = billService.updateBillStatus(1L, "PAID");
 
         // Then
         assertNotNull(result);
@@ -191,7 +192,7 @@ public class BillServiceTest {
         when(billRepository.findByStatus(Bill.BillStatus.UNPAID)).thenReturn(Arrays.asList(testBill, overdueBill));
 
         // When
-        List<BillDto> overdueBills = billService.getOverdueBills();
+        List<BillResponseDto> overdueBills = billService.getOverdueBills();
 
         // Then
         assertEquals(1, overdueBills.size()); // Only overdueBill should be returned
@@ -205,7 +206,7 @@ public class BillServiceTest {
         when(billRepository.findByStatus(Bill.BillStatus.PAID)).thenReturn(Arrays.asList(testBill));
 
         // When
-        List<BillDto> bills = billService.getBillsByStatus("PAID");
+        List<BillResponseDto> bills = billService.getBillsByStatus("PAID");
 
         // Then
         assertNotNull(bills);
