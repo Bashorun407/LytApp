@@ -8,12 +8,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record PaymentResponseDto(
-        Bill bill,
-        User user,
+//        long billId,
+//        User user,
         BigDecimal amountPaid,
         String paymentMethod,
         Payment.PaymentStatus status,
         String transactionId,
+        String token,
         LocalDateTime paidAt
 
 ) {

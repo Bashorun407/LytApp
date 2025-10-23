@@ -7,12 +7,13 @@ public class PaymentMapper {
 
     public static PaymentResponseDto mapToPaymentDto (Payment payment){
         return new PaymentResponseDto(
-                payment.getBill(),
-                payment.getUser(),
+//                payment.getBill(),
+//                payment.getUser(),
                 payment.getAmountPaid(),
                 payment.getPaymentMethod(),
                 payment.getStatus(),
                 payment.getTransactionId(),
+                payment.getToken(),
                 payment.getPaidAt()
         );
     }
