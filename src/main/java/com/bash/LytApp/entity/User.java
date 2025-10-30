@@ -38,6 +38,14 @@ public class User {
     @NotNull(message = "Password is required")
     private String hashedPassword;
 
+    private String address;
+
+    private boolean email_verified;
+
+    private boolean two_factor_enabled;
+
+    private LocalDateTime last_login;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -56,11 +64,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Notification> notifications;
-
-    // Constructors
-//    public User() {
-//        this.creationDate = LocalDateTime.now();
-//        this.modifiedDate = LocalDateTime.now();
-//    }
 
 }

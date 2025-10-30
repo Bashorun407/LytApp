@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -18,6 +19,8 @@ public class Role {
 
         @Column(nullable = false, unique = true)
         private String name;
+
+        private LocalDateTime created_at;
 
         @OneToMany(mappedBy = "role")
         private List<User> users;

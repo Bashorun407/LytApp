@@ -14,6 +14,6 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (first_name, last_name, email, hashed_password, creation_date, modified_date, role_id)
 VALUES
-  ('John', 'Doe', 'john.doe@example.com', 'hashedpass123', NOW(), NOW(), 1),
-  ('Jane', 'Smith', 'jane.smith@example.com', 'hashedpass456', NOW(), NOW(), 1);
+  ('John', 'Doe', 'john.doe@example.com', 'hashedpass123', NOW(), NOW(), 1, true, true, NOW()),
+  ('Jane', 'Smith', 'jane.smith@example.com', 'hashedpass456', NOW(), NOW(), 1, false, false, NOW());
   ON CONFLICT (name) DO NOTHING;

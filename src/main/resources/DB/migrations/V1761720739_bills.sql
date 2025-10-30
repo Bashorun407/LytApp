@@ -1,6 +1,8 @@
 CREATE TABLE IF NOT EXISTS bills (
     id BIGSERIAL PRIMARY KEY,
+
     user_id BIGINT NOT NULL REFERENCES users(id),
+    meter_number
     amount DECIMAL(10,2) NOT NULL,
     due_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'UNPAID',

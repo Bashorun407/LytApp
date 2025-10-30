@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS roles (
 
 -- Insert Roles
 INSERT INTO roles (name) VALUES
-  ('USER'),
+  ('USER', ),
   ('ADMIN');
   ON CONFLICT (name) DO NOTHING;
 
