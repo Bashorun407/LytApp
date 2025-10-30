@@ -1,14 +1,10 @@
 package com.bash.LytApp.dto;
 
-import com.bash.LytApp.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
-
-import java.util.List;
+import java.time.LocalDateTime;
 
 public record RoleDto(
        Long id,
-       String name
-       //List<User> users
+       String name,
+       LocalDateTime created_at
 ) {
 }

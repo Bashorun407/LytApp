@@ -14,7 +14,10 @@ public record UserDto(
         LocalDateTime creationDate,
         LocalDateTime modifiedDate,
         //Role role
-        String role
+        String role,
+        boolean email_verified,
+        boolean two_factor_enabled,
+        LocalDateTime last_login
 ) {
     public UserDto {
         if (firstName == null || firstName.isBlank()) {

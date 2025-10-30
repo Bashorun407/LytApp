@@ -3,10 +3,7 @@ package com.bash.LytApp.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "Users")
 public class User {
     @Id
@@ -40,12 +38,6 @@ public class User {
 
     private String address;
 
-    private boolean email_verified;
-
-    private boolean two_factor_enabled;
-
-    private LocalDateTime last_login;
-
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -55,6 +47,12 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    private Boolean email_verified;
+
+    private Boolean two_factor_enabled;
+
+    private LocalDateTime last_login;
 
     @OneToMany(mappedBy = "user")
     private List<Bill> bills;

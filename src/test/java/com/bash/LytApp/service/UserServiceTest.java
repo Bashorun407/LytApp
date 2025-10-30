@@ -57,7 +57,8 @@ public class UserServiceTest {
 
         testUserDto = new UserDto(
                 "John", "Doe", "john.doe@example.com",
-                "hashedPassword", LocalDateTime.now(), LocalDateTime.now(), "USER"
+                "hashedPassword", LocalDateTime.now(), LocalDateTime.now(), "USER",
+                true, true, LocalDateTime.now()
         );
     }
 

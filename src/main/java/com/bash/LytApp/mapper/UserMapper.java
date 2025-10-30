@@ -40,7 +40,10 @@ public class UserMapper {
                 user.getHashedPassword(),
                 user.getCreationDate(),
                 user.getModifiedDate(),
-                user.getRole().getName()
+                user.getRole().getName(),
+                user.getEmail_verified(),
+                user.getTwo_factor_enabled(),
+                user.getLast_login()
         );
     }
 }

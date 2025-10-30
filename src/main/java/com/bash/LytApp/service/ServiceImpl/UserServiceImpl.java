@@ -61,8 +61,9 @@ public class UserServiceImpl implements UserService {
                     return roleRepository.save(newRole);
                 });
 
-        User user = new User();
-        user.setRole(userRole);
+        User user = User.builder().role(userRole).creationDate(LocalDateTime.now())
+                        .email_verified(false).two_factor_enabled(false).last_login(LocalDateTime.now()).build();
+
         User savedUser = userRepository.save(UserMapper.mapToCreateUser(user, userCreateDto));
         return UserMapper.mapToUserDto(savedUser);
     }
@@ -81,13 +82,15 @@ public class UserServiceImpl implements UserService {
 
         //Setting new role
         if(!userUpdateDto.role().isBlank()){
-            roleRepository.findByName(userUpdateDto.role())
+            Role role = roleRepository.findByName(userUpdateDto.role())
                             .orElseGet(()->{
                                 Role newRole = new Role(userUpdateDto.role());
                                 return roleRepository.save(newRole);
                                     }
                             );
+            existingUser.setRole(role);
         }
+
 
         User updatedUser = userRepository.save(UserMapper.mapToUpdateUser(existingUser, userUpdateDto));
         return UserMapper.mapToUserDto(updatedUser);

@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS roles (
 );
 
 -- Insert Roles
-INSERT INTO roles (name) VALUES
-  ('USER', ),
-  ('ADMIN');
+INSERT INTO roles (name, created_at) VALUES
+  ('USER', NOW()),
+  ('ADMIN', NOW());
   ON CONFLICT (name) DO NOTHING;
 

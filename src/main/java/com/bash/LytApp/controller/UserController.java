@@ -61,9 +61,6 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
-        //running updates without the try/catch statement
-//        UserDto updatedUser = userService.updateUser(id, userUpdateDto);
-//        return ResponseEntity.ok(updatedUser);
 
         //running updates with the try/catch statement
            try {

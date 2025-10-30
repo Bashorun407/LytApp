@@ -3,6 +3,7 @@ package com.bash.LytApp.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +21,8 @@ public class Role {
         @Column(nullable = false, unique = true)
         private String name;
 
+        @Column(name = "created_at")
+        @CreationTimestamp
         private LocalDateTime created_at;
 
         @OneToMany(mappedBy = "role")
