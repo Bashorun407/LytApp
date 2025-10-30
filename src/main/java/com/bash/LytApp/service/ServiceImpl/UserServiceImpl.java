@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
                 .orElseGet(() -> {
                     Role newRole = new Role();
                     newRole.setName("USER");
+                    newRole.setCreated_at(LocalDateTime.now());
                     return roleRepository.save(newRole);
                 });
 
@@ -85,6 +86,7 @@ public class UserServiceImpl implements UserService {
             Role role = roleRepository.findByName(userUpdateDto.role())
                             .orElseGet(()->{
                                 Role newRole = new Role(userUpdateDto.role());
+                                newRole.setCreated_at(LocalDateTime.now());
                                 return roleRepository.save(newRole);
                                     }
                             );
