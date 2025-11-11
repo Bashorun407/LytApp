@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #28a745; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .amount { font-size: 24px; font-weight: bold; color: #28a745; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>LightPay</h1>
+        <p>Payment Confirmation</p>
+    </div>
+    <div class="content">
+        <p>Hello <span th:text="${userName}">User</span>,</p>
+        <p>Your payment has been processed successfully!</p>
+
+        <p><strong>Transaction Details:</strong></p>
+        <ul>
+            <li>Transaction ID: <span th:text="${transactionId}">TXN001</span></li>
+            <li>Amount Paid: $<span th:text="${#numbers.formatDecimal(amount, 1, 2)}">0.00</span></li>
+            <li>Payment Method: <span th:text="${paymentMethod}">Credit Card</span></li>
+            <li>Date: <span th:text="${#dates.format(paymentDate)}">2024-01-01</span></li>
+        </ul>
+
+        <p>Thank you for using LightPay!</p>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 LightPay. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>
