@@ -41,9 +41,9 @@ public class UserMapper {
                 user.getCreationDate(),
                 user.getModifiedDate(),
                 user.getRole().getName(),
-                user.getEmail_verified(),
-                user.getTwo_factor_enabled(),
-                user.getLast_login()
+                user.getEmailVerified(),
+                user.getTwoFactorEnabled(),
+                user.getLastLogin()
         );
     }
 }

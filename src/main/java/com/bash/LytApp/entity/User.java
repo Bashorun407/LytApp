@@ -53,14 +53,16 @@ public class User implements UserDetails {
     private Role role;
 
     @Column(name = "email_verified")
-    private Boolean email_verified;
+    private Boolean emailVerified = false;
 
     @Column(name = "enabled")
     private Boolean enabled = true;
 
-    private Boolean two_factor_enabled;
+    @Column(name = "two_factor_enabled")
+    private Boolean twoFactorEnabled = false;
 
-    private LocalDateTime last_login;
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     @OneToMany(mappedBy = "user")
     private List<Bill> bills;

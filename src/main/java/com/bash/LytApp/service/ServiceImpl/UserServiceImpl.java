@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
                 });
 
         User user = User.builder().role(userRole).creationDate(LocalDateTime.now())
-                        .email_verified(false).two_factor_enabled(false).last_login(LocalDateTime.now()).build();
+                        .emailVerified(false).twoFactorEnabled(false).lastLogin(LocalDateTime.now()).build();
 
         User savedUser = userRepository.save(UserMapper.mapToCreateUser(user, userCreateDto));
         return UserMapper.mapToUserDto(savedUser);
