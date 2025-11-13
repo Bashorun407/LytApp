@@ -220,22 +220,27 @@ public class UserServiceTest {
         // Given
         UserUpdateDto updateDto = new UserUpdateDto(
                 "Johnny", "Doey", "johnny.doey@example.com",
-                "hashedPassword", "USER"  // Changed from testRole to "USER"
+                "hashedPassword", "USER"
         );
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        Role role = new Role();
+        role.setName("USER");
+        testUser.setRole(role);
+
+        when(userRepository.findById(10L)).thenReturn(Optional.of(testUser));
+        when(roleRepository.findByName("USER")).thenReturn(Optional.of(role)); // ✅ wrapped in Optional
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
         // When
-        UserDto result = userService.updateUser(1L, updateDto);
+        UserDto result = userService.updateUser(10L, updateDto);
 
         // Then
         assertNotNull(result);
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(10L);
+        verify(roleRepository, times(1)).findByName("USER");
         verify(userRepository, times(1)).save(any(User.class));
-        // Remove this line since we're not checking email existence:
-        // verify(userRepository, times(1)).existsByEmail("johnny.doey@example.com");
     }
+
 
     @Test
     void updateUser_WithExistingEmail_ThrowsException() {

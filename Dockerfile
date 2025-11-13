@@ -1,20 +1,27 @@
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-FROM openjdk:17-jdk-slim
+COPY src ./src
+RUN mvn clean package -DskipTests
 
+# Run stage
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# Copy Maven files
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy the Spring Boot application JAR
+COPY --from=builder /app/target/*.jar app.jar
 
-# Copy source code
-COPY src ./src
+# Create a non-root user for security
+RUN groupadd -r spring && useradd -r -g spring spring
+USER spring
 
-# Make Maven wrapper executable and build
-RUN chmod +x ./mvnw
-RUN ./mvnw clean package -DskipTests
-
-EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "target/lytpay-1.0.0.jar"]
+# Optimized JVM settings for containers
+ENTRYPOINT ["java", \
+    "-XX:+UseContainerSupport", \
+    "-XX:MaxRAMPercentage=75.0", \
+    "-Djava.security.egd=file:/dev/./urandom", \
+    "-Dspring.profiles.active=prod", \
+    "-jar", "app.jar"]
