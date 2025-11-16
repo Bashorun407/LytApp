@@ -1,11 +1,11 @@
 package com.bash.LytApp.controller;
 
-import com.bash.LytApp.dto.AuthRequestDto;
-import com.bash.LytApp.dto.AuthResponseDto;
-import com.bash.LytApp.dto.VerificationRequestDto;
+import com.bash.LytApp.dto.*;
+import com.bash.LytApp.entity.User;
 import com.bash.LytApp.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,41 +17,42 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
+        try {
+            AuthResponseDto authResponse = authService.register(registerRequestDto);
+            return ResponseEntity.ok(authResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody AuthRequestDto authRequestDto) {
-        AuthResponseDto authResponse = authService.authenticate(authRequestDto);
-        return ResponseEntity.ok(authResponse);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        try {
+            AuthResponseDto authResponse = authService.login(loginRequestDto);
+            return ResponseEntity.ok(authResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
-    @PostMapping("/verify-2fa")
-    public ResponseEntity<AuthResponseDto> verify2FA(@Valid @RequestBody VerificationRequestDto verificationRequestDto) {
-        AuthResponseDto authResponse = authService.verify2FA(verificationRequestDto);
-        return ResponseEntity.ok(authResponse);
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        try {
+            User currentUser = authService.getCurrentUser();
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+            }
+            return ResponseEntity.ok(currentUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
+        }
     }
 
-    @PostMapping("/send-verification")
-    public ResponseEntity<String> sendVerificationEmail(@RequestParam String email) {
-        authService.sendVerificationEmail(email);
-        return ResponseEntity.ok("Verification email sent successfully");
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("Auth endpoint is working!");
     }
 
-    @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(@Valid @RequestBody VerificationRequestDto verificationRequestDto) {
-        authService.verifyEmail(verificationRequestDto);
-        return ResponseEntity.ok("Email verified successfully");
-    }
-
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-        authService.sendPasswordResetEmail(email);
-        return ResponseEntity.ok("Password reset email sent successfully");
-    }
-
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(
-            @RequestParam String token,
-            @RequestParam String newPassword) {
-        authService.resetPassword(token, newPassword);
-        return ResponseEntity.ok("Password reset successfully");
-    }
 }
