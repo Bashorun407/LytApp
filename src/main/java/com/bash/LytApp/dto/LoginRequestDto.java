@@ -1,16 +1,14 @@
 package com.bash.LytApp.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public record LoginRequestDto(
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email should be valid")
         String email,
+
+        @NotBlank(message = "Password is required")
         String password
 ) {
-    public LoginRequestDto{
-        if(email == null || email.isBlank()){
-            throw new IllegalArgumentException("Email cannot be empty");
-        }
-
-        if(password == null || password.isBlank()){
-            throw new IllegalArgumentException("Password cannot be empty");
-        }
-    }
 }

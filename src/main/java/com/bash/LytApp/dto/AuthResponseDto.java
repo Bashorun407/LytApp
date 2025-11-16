@@ -4,9 +4,12 @@ public record AuthResponseDto(
         String token,
         String type,
         String email,
-        String message,
-        boolean requires2FA
+        String firstName,
+        String lastName,
+        String role
 ) {
+
+
     // Compact canonical constructor to set default value for 'type'
     public AuthResponseDto {
         if (type == null || type.isBlank()) {
@@ -14,12 +17,4 @@ public record AuthResponseDto(
         }
     }
 
-    // Additional convenience constructors
-    public AuthResponseDto (String token, String email) {
-        this(token, "Bearer", email, null, false);
-    }
-
-    public AuthResponseDto (String message, boolean requires2FA) {
-        this(null, "Bearer", null, message, requires2FA);
-    }
 }

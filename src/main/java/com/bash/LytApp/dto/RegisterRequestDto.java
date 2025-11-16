@@ -2,16 +2,18 @@ package com.bash.LytApp.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record RegisterRequestDto(
-        @NotBlank(message = "First name cannot be blank")
+        @NotBlank(message = "First name is required")
         String firstName,
-        @NotBlank(message = "Last name cannot be blank")
+        @NotBlank(message = "Last name is required")
         String lastName,
-        @NotBlank(message = "Email cannot be blank")
-        @Email(message = "Email must be valid")
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email should be valid")
         String email,
-        @NotBlank(message = "Password cannot be blank")
+        @NotBlank(message = "Password is required")
+        @Size(min = 6, message = "Password must be at least 6 characters")
         String password
 
 ) {
