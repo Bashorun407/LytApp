@@ -48,7 +48,7 @@ public class User implements UserDetails {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 
