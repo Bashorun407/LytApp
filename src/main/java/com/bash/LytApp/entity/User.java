@@ -82,7 +82,7 @@ public class User implements UserDetails {
     //This is generic for now
     @Override
     public String getPassword() {
-        return "";
+        return hashedPassword;
     }
 
     @Override
