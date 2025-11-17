@@ -34,24 +34,31 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public AuthResponseDto login(LoginRequestDto loginRequestDto) {
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    public AuthResponseDto login(LoginRequestDto loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequestDto.email(),
-                            loginRequestDto.password()
+                            loginRequest.email(),
+                            loginRequest.password()
                     )
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtil.generateToken(getCurrentUser());
 
-            User user = userRepository.findByEmail(loginRequestDto.email())
+            // FIX: Cast the principal to UserDetails
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtUtil.generateToken(userDetails);
+
+            // Get the full user entity for response
+            User user = userRepository.findByEmail(loginRequest.email())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             return new AuthResponseDto(
                     jwt,
-                    "String",
+                    "Bearer",
                     user.getEmail(),
                     user.getFirstName(),
                     user.getLastName(),
@@ -60,13 +67,16 @@ public class AuthService {
 
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid email or password");
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Authentication error: " + e.getMessage());
         }
     }
 
-    public AuthResponseDto register(RegisterRequestDto registerRequestDto) {
+
+    public AuthResponseDto register(RegisterRequestDto registerRequest) {
         // Check if email already exists
-        if (userRepository.existsByEmail(registerRequestDto.email())) {
-            throw new RuntimeException("Email already exists: " + registerRequestDto.email());
+        if (userRepository.existsByEmail(registerRequest.email())) {
+            throw new RuntimeException("Email already exists: " + registerRequest.email());
         }
 
         // Get or create USER role
@@ -79,10 +89,10 @@ public class AuthService {
 
         // Create new user
         User user = new User();
-        user.setFirstName(registerRequestDto.firstName());
-        user.setLastName(registerRequestDto.lastName());
-        user.setEmail(registerRequestDto.email());
-        user.setHashedPassword(passwordEncoder.encode(registerRequestDto.password()));
+        user.setFirstName(registerRequest.firstName());
+        user.setLastName(registerRequest.lastName());
+        user.setEmail(registerRequest.email());
+        user.setHashedPassword(passwordEncoder.encode(registerRequest.password()));
         user.setRole(userRole);
         user.setEmailVerified(false);
         user.setEnabled(true);
@@ -90,11 +100,13 @@ public class AuthService {
         User savedUser = userRepository.save(user);
 
         // Generate JWT token for auto-login after registration
-        String jwt = jwtUtil.generateToken(savedUser);
+        // FIX: Use UserDetailsService to load the user as UserDetails
+        UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
+        String jwt = jwtUtil.generateToken(userDetails);
 
         return new AuthResponseDto(
                 jwt,
-                "String",
+                "Bearer",
                 savedUser.getEmail(),
                 savedUser.getFirstName(),
                 savedUser.getLastName(),

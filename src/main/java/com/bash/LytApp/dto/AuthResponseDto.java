@@ -16,5 +16,4 @@ public record AuthResponseDto(
             type = "Bearer";
         }
     }
-
 }
