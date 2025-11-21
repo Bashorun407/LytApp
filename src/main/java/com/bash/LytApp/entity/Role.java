@@ -23,7 +23,7 @@ public class Role {
 
         @Column(name = "created_at")
         @CreationTimestamp
-        private LocalDateTime created_at;
+        private LocalDateTime createdAt;
 
         @OneToMany(mappedBy = "role")
         private List<User> users;
@@ -33,6 +33,12 @@ public class Role {
 
         public Role(String name) {
             this.name = name;
+        }
+
+        // Pre-persist method
+        @PrePersist
+        protected void onCreate() {
+                createdAt = LocalDateTime.now();
         }
 
 }

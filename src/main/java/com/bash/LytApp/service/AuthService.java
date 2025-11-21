@@ -74,6 +74,8 @@ public class AuthService {
 
 
     public AuthResponseDto register(RegisterRequestDto registerRequest) {
+        //logger.info("Attempting registration for email: {}", registerRequest.getEmail());
+
         // Check if email already exists
         if (userRepository.existsByEmail(registerRequest.email())) {
             throw new RuntimeException("Email already exists: " + registerRequest.email());

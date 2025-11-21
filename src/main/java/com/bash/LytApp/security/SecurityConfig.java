@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -42,7 +43,19 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+
                         // All other endpoints require authentication
+                        // User role endpoints
+                        //.requestMatchers("/api/users/me").hasAnyRole("USER", "ADMIN")
+                        //.requestMatchers("/api/bills/my-bills").hasAnyRole("USER", "ADMIN")
+                        //.requestMatchers("/api/payments/process").hasAnyRole("USER", "ADMIN")
+                        //.requestMatchers("/api/payments/my-payments").hasAnyRole("USER", "ADMIN")
+
+                        // Admin only endpoints
+                        //.requestMatchers("/api/users/**").hasRole("ADMIN")
+                        //.requestMatchers("/api/bills/**").hasRole("ADMIN")
+                        //.requestMatchers("/api/payments/**").hasRole("ADMIN")
+                        //.requestMatchers("/api/notifications/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
