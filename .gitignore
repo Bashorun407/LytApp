@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+##### Untrack application.properties #############
+src/main/resources/application.properties
