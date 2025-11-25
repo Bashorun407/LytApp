@@ -37,6 +37,9 @@ public class AuthService {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private EmailService emailService;
+
     public AuthResponseDto login(LoginRequestDto loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -105,6 +108,9 @@ public class AuthService {
         // FIX: Use UserDetailsService to load the user as UserDetails
         UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
         String jwt = jwtUtil.generateToken(userDetails);
+
+        //Send mail to notify user that they're logged in.
+        emailService.sendVerificationEmail(registerRequest.email(), registerRequest.firstName(), jwt);
 
         return new AuthResponseDto(
                 jwt,
