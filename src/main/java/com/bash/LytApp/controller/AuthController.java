@@ -38,26 +38,32 @@ public class AuthController {
         }
     }
 
+    // Password Reset Endpoints
+
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDto request) {
         try {
-            authService.forgotPassword(email);
-            // Always return the same message regardless of whether the email exists for security
-            return ResponseEntity.ok("If the email exists, a password reset link has been sent.");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error processing forgot password request: " + e.getMessage());
+            PasswordResetResponseDto response = authService.forgotPassword(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new PasswordResetResponseDto(e.getMessage(), false));
         }
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequestDto resetPasswordRequest) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequestDto request) {
         try {
-            authService.resetPassword(resetPasswordRequest.token(), resetPasswordRequest.newPassword());
-            return ResponseEntity.ok("Password reset successfully.");
+            PasswordResetResponseDto response = authService.resetPassword(request);
+            if (response.success()) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.badRequest().body(response);
+            }
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new PasswordResetResponseDto(e.getMessage(), false));
         }
     }
+
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         try {

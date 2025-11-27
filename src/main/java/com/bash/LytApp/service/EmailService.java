@@ -36,16 +36,24 @@ public class EmailService {
     }
 
     @Async
-    public void sendPasswordResetEmail(String toEmail, String name, String resetToken) {
+    public void sendPasswordResetEmail(String toEmail, String username, String resetToken) {
         try {
-            Context context = new Context();
-            context.setVariable("name", name);
-            context.setVariable("resetToken", resetToken);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            String htmlContent = templateEngine.process("email/password-reset", context);
-            sendEmail(toEmail, "LightPay - Password Reset", htmlContent);
+            helper.setTo(toEmail);
+            helper.setSubject("Password Reset Request - Bill Management App");
+            helper.setFrom("noreply@billmanager.com");
+
+            String emailContent = createPasswordResetEmailContent(username, resetToken);
+            helper.setText(emailContent, true);
+
+            mailSender.send(message);
+            System.out.println("Password reset email sent successfully to: " + toEmail);
+
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send password reset email", e);
+            System.err.println("Failed to send password reset email: " + e.getMessage());
+            throw new RuntimeException("Failed to send password reset email");
         }
     }
 
@@ -96,6 +104,15 @@ public class EmailService {
         helper.setFrom("noreply@lightpay.com");
 
         mailSender.send(message);
+    }
+
+    private String createPasswordResetEmailContent(String username, String resetToken) {
+        Context context = new Context();
+        context.setVariable("username", username);
+        context.setVariable("resetToken", resetToken);
+        context.setVariable("resetLink", "http://localhost:63342/reset-password?token=" + resetToken);
+
+        return templateEngine.process("password-reset-template", context);
     }
 
 }
