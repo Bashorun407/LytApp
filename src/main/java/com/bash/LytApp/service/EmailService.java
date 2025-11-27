@@ -36,6 +36,20 @@ public class EmailService {
     }
 
     @Async
+    public void sendPasswordResetEmail(String toEmail, String name, String resetToken) {
+        try {
+            Context context = new Context();
+            context.setVariable("name", name);
+            context.setVariable("resetToken", resetToken);
+
+            String htmlContent = templateEngine.process("email/password-reset", context);
+            sendEmail(toEmail, "LightPay - Password Reset", htmlContent);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send password reset email", e);
+        }
+    }
+
+    @Async
     public void sendPaymentConfirmation(String toEmail, String userName, String transactionId,
                                         Double amount, String paymentMethod, LocalDateTime paymentDate) {
         try {
@@ -53,19 +67,6 @@ public class EmailService {
         }
     }
 
-    @Async
-    public void sendPasswordResetEmail(String toEmail, String name, String resetToken) {
-        try {
-            Context context = new Context();
-            context.setVariable("name", name);
-            context.setVariable("resetToken", resetToken);
-
-            String htmlContent = templateEngine.process("email/password-reset", context);
-            sendEmail(toEmail, "LightPay - Password Reset", htmlContent);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to send password reset email", e);
-        }
-    }
 
     @Async
     public void sendBillNotification(String toEmail, String userName, Double amount,
@@ -83,6 +84,7 @@ public class EmailService {
             throw new RuntimeException("Failed to send bill notification email", e);
         }
     }
+
 
     private void sendEmail(String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
