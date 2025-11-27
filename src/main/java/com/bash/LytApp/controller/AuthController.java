@@ -38,6 +38,26 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        try {
+            authService.forgotPassword(email);
+            // Always return the same message regardless of whether the email exists for security
+            return ResponseEntity.ok("If the email exists, a password reset link has been sent.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error processing forgot password request: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequestDto resetPasswordRequest) {
+        try {
+            authService.resetPassword(resetPasswordRequest.token(), resetPasswordRequest.newPassword());
+            return ResponseEntity.ok("Password reset successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         try {

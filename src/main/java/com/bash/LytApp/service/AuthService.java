@@ -1,8 +1,10 @@
 package com.bash.LytApp.service;
 
 import com.bash.LytApp.dto.*;
+import com.bash.LytApp.entity.PasswordResetToken;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.repository.PasswordResetTokenRepository;
 import com.bash.LytApp.repository.RoleRepository;
 import com.bash.LytApp.repository.UserRepository;
 import com.bash.LytApp.security.CustomUserDetailsService;
@@ -16,6 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -39,6 +44,9 @@ public class AuthService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
     public AuthResponseDto login(LoginRequestDto loginRequest) {
         try {
@@ -120,6 +128,48 @@ public class AuthService {
                 savedUser.getLastName(),
                 savedUser.getRole().getName()
         );
+    }
+
+
+    //Method to call for forgot password
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElse(null); // We don't throw exception to avoid revealing if email exists
+
+        if (user != null) {
+            // Generate token and set expiry (1 hour from now)
+            String token = UUID.randomUUID().toString();
+            LocalDateTime expiryDate = LocalDateTime.now().plusHours(1);
+
+            // Check if there's an existing token for the user and delete it
+            passwordResetTokenRepository.findByUser(user).ifPresent(passwordResetTokenRepository::delete);
+
+            // Create and save the new token
+            PasswordResetToken resetToken = new PasswordResetToken(token, user, expiryDate);
+            passwordResetTokenRepository.save(resetToken);
+
+            // Send email
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getFirstName(), token);
+        }
+        // If user doesn't exist, we just do nothing (for security)
+    }
+
+    //Method to call to reset password
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            passwordResetTokenRepository.delete(resetToken);
+            throw new RuntimeException("Token expired");
+        }
+
+        User user = resetToken.getUser();
+        user.setHashedPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // Delete the token after use
+        passwordResetTokenRepository.delete(resetToken);
     }
 
     public User getCurrentUser() {
