@@ -17,7 +17,7 @@ public class TestController {
     @PostMapping("/send-test-email")
     public ResponseEntity<?> sendTestEmail(@RequestParam String email) {
         try {
-            emailService.sendVerificationEmail("aprilweather@gmail.com", "Marvelous", "Test_Token: ********");
+            emailService.sendVerificationEmail(email, "Olusheyi", "Test_Token: ********");
             return ResponseEntity.ok("Test email sent successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to send test email: " + e.getMessage());
