@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>New Bill Notification</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #ffc107; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .highlight { font-size: 24px; font-weight: bold; color: #ff9800; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #ff9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>LightPay</h1>
+        <p>New Bill Available</p>
+    </div>
+
+    <div class="content">
+        <p>Hello <span th:text="${userName}">User</span>,</p>
+
+        <p>You have a new bill available on your LightPay account.</p>
+
+        <p><strong>Bill Details:</strong></p>
+        <ul>
+            <li>Bill ID: <span th:text="${billId}">12345</span></li>
+            <li>Amount Due: ₦<span th:text="${#numbers.formatDecimal(amount, 1, 2)}">0.00</span></li>
+            <li>Due Date: <span th:text="${#dates.format(dueDate, 'yyyy-MM-dd HH:mm')}">2024-01-01</span></li>
+        </ul>
+
+        <p class="highlight">
+            Please ensure payment is made before the due date.
+        </p>
+
+        <div style="text-align: center;">
+            <a th:href="@{'https://lytxtreme.online/bills/' + ${billId}}" class="button">
+                View Bill
+            </a>
+        </div>
+
+        <p>If you did not expect this bill, please contact support immediately.</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 LightPay. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>

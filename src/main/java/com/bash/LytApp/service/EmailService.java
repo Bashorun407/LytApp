@@ -42,8 +42,8 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(toEmail);
-            helper.setSubject("Password Reset Request - Bill Management App");
-            helper.setFrom("noreply@billmanager.com");
+            helper.setSubject("Password Reset Request - LytApp");
+            helper.setFrom("noreply@lytapp.com");
 
             String emailContent = createPasswordResetEmailContent(username, resetToken);
             helper.setText(emailContent, true);
