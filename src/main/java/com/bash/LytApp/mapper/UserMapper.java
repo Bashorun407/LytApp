@@ -30,6 +30,7 @@ public class UserMapper {
 
         return user;
     }
+
     //Maps User to UserDto
     public static UserDto mapToUserDto(User user){
         return new UserDto(

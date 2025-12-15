@@ -4,6 +4,7 @@ import com.bash.LytApp.dto.*;
 import com.bash.LytApp.entity.PasswordResetToken;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.mapper.UserMapper;
 import com.bash.LytApp.repository.PasswordResetTokenRepository;
 import com.bash.LytApp.repository.RoleRepository;
 import com.bash.LytApp.repository.UserRepository;
@@ -208,13 +209,18 @@ public class AuthService {
         return UUID.randomUUID().toString();
     }
 
-    public User getCurrentUser() {
+    public UserDto getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
 
+
         String email = authentication.getName();
-        return userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email).orElse(null);
+        UserDto userDto = UserMapper.mapToUserDto(user);
+        //return userRepository.findByEmail(email).orElse(null);
+
+        return userDto;
     }
 }

@@ -2,6 +2,7 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.*;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.mapper.UserMapper;
 import com.bash.LytApp.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class AuthController {
 
     // Password Reset Endpoints
 
-    @PostMapping("/forgot-password")
+    @PutMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDto request) {
         try {
             PasswordResetResponseDto response = authService.forgotPassword(request);
@@ -50,7 +51,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PutMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequestDto request) {
         try {
             PasswordResetResponseDto response = authService.resetPassword(request);
@@ -67,11 +68,12 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         try {
-            User currentUser = authService.getCurrentUser();
-            if (currentUser == null) {
+            UserDto currentUserDto = authService.getCurrentUser();
+
+            if (currentUserDto == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
             }
-            return ResponseEntity.ok(currentUser);
+            return ResponseEntity.ok(currentUserDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
         }
