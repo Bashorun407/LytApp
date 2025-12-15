@@ -101,7 +101,7 @@ public class EmailService {
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
-        helper.setFrom("noreply@lightpay.com");
+        helper.setFrom("lytwind25@gmail.com");
 
         mailSender.send(message);
     }
