@@ -231,6 +231,14 @@
             <div class="modal-body">
                 <form id="addBillForm">
                     <div class="mb-3">
+                        <label for="billUserId" class="form-label">User ID</label>
+                        <input type="number" class="form-control" id="billUserId" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="billMeterNumber" class="form-label">Meter Number</label>
+                        <input type="text" class="form-control" id="billMeterNumber" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="billAmount" class="form-label">Amount</label>
                         <input type="number" class="form-control" id="billAmount" step="0.01" required>
                     </div>
@@ -240,7 +248,15 @@
                     </div>
                     <div class="mb-3">
                         <label for="billDescription" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="billDescription" required>
+                        <input type="text" class="form-control" id="billDescription">
+                    </div>
+                    <div class="mb-3">
+                        <label for="billStatus" class="form-label">Status</label>
+                        <select class="form-select" id="billStatus">
+                            <option value="UNPAID" selected>UNPAID</option>
+                            <option value="PAID">PAID</option>
+                            <option value="OVERDUE">OVERDUE</option>
+                        </select>
                     </div>
                 </form>
             </div>

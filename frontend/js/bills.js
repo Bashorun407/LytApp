@@ -1,9 +1,54 @@
-// Bills management functions
+// Base URL of your backend API
+const API_BASE = 'http://localhost:8080/api'; // adjust if needed
+
+// Simple API call wrapper with optional Authorization token
+const authManager = {
+    getToken() {
+        // Example: JWT stored in localStorage
+        return localStorage.getItem('authToken');
+    },
+
+    async apiCall(endpoint, options = {}) {
+        const defaultHeaders = {
+            'Content-Type': 'application/json'
+        };
+
+        const token = this.getToken();
+        if (token) {
+            defaultHeaders['Authorization'] = `Bearer ${token}`;
+        }
+
+        const mergedHeaders = {
+            ...defaultHeaders,
+            ...(options.headers || {})
+        };
+
+        const fetchOptions = {
+            ...options,
+            headers: mergedHeaders
+        };
+
+        const res = await fetch(API_BASE + endpoint, fetchOptions);
+
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`API error: ${res.status} - ${text}`);
+        }
+
+        return res.json();
+    }
+};
+
+// Bills management class
 class BillsManager {
+    constructor() {
+        this.userId = 1; // Hardcoded for testing. Replace with real userId after auth
+    }
+
     // Get user's bills
     async getMyBills() {
         try {
-            return await authManager.apiCall('/bills/my-bills');
+            return await authManager.apiCall(`/bills/user/${this.userId}`);
         } catch (error) {
             console.error('Failed to fetch bills:', error);
             throw error;
@@ -13,12 +58,14 @@ class BillsManager {
     // Create new bill
     async createBill(billData) {
         try {
-            return await authManager.apiCall('/bills', {
+            const newBill = await authManager.apiCall('/bills', {
                 method: 'POST',
                 body: JSON.stringify(billData)
             });
+
+            await this.loadBills();
+            return newBill;
         } catch (error) {
-            console.error('Failed to create bill:', error);
             throw error;
         }
     }
@@ -30,7 +77,6 @@ class BillsManager {
                 method: 'PUT'
             });
         } catch (error) {
-            console.error('Failed to update bill:', error);
             throw error;
         }
     }
@@ -44,74 +90,3 @@ class BillsManager {
         return bills.map(bill => `
             <div class="bill-item ${bill.status.toLowerCase()}">
                 <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h6>Bill #${bill.id}</h6>
-                        <p class="mb-1">Amount: $${bill.amount}</p>
-                        <p class="mb-1">Due: ${new Date(bill.dueDate).toLocaleDateString()}</p>
-                        <span class="badge status-badge bg-${this.getStatusColor(bill.status)}">
-                            ${bill.status}
-                        </span>
-                    </div>
-                    <div>
-                        ${bill.status === 'UNPAID' ? `
-                            <button class="btn btn-success btn-sm pay-bill-btn" data-bill-id="${bill.id}">
-                                Pay Now
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    getStatusColor(status) {
-        switch (status) {
-            case 'PAID': return 'success';
-            case 'UNPAID': return 'warning';
-            case 'OVERDUE': return 'danger';
-            default: return 'secondary';
-        }
-    }
-
-    // Load and display bills
-    async loadBills() {
-        try {
-            const billsList = document.getElementById('billsList');
-            billsList.innerHTML = '<div class="text-center"><span class="loading-spinner"></span> Loading bills...</div>';
-
-            const bills = await this.getMyBills();
-            billsList.innerHTML = this.renderBillsList(bills);
-
-            // Add event listeners to pay buttons
-            document.querySelectorAll('.pay-bill-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const billId = e.target.getAttribute('data-bill-id');
-                    this.payBill(billId);
-                });
-            });
-        } catch (error) {
-            document.getElementById('billsList').innerHTML =
-                '<div class="alert alert-danger">Failed to load bills: ' + error.message + '</div>';
-        }
-    }
-
-    // Pay bill function
-    async payBill(billId) {
-        try {
-            // In a real app, you'd integrate with a payment gateway
-            // For now, we'll just mark the bill as paid
-            await this.updateBillStatus(billId, 'PAID');
-
-            // Reload bills
-            await this.loadBills();
-
-            // Show success message
-            alert('Payment processed successfully!');
-        } catch (error) {
-            alert('Payment failed: ' + error.message);
-        }
-    }
-}
-
-// Create global bills instance
-const billsManager = new BillsManager();
