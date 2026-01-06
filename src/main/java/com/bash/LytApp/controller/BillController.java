@@ -3,6 +3,8 @@ package com.bash.LytApp.controller;
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.service.BillService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,13 @@ public class BillController {
     @Autowired
     private BillService billService;
 
+    @Operation(
+            summary = "Get all the bills for a specific user by user ID"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "HTTP Status List"
+    )
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BillResponseDto>> getUserBills(@PathVariable Long userId) {
         try {
