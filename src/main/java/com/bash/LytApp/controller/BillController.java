@@ -41,7 +41,7 @@ public class BillController {
         }
     }
 
-    @GetMapping("/user/{email}")
+    @GetMapping("/user-bills")
     public ResponseEntity<List<BillResponseDto>> getUserBillsByEmail(@AuthenticationPrincipal UserDetails userdetails){
         try {
             //UserDetails is the object loaded in CustomUserDetailsService
