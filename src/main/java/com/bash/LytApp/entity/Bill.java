@@ -26,6 +26,9 @@ public class Bill {
     @NotNull(message = "Meter Number can not be null")
     private String meterNumber;
 
+    @Column(name = "email", nullable = false)
+    private String email;
+
     @Column(nullable = false)
     private BigDecimal amount;
 

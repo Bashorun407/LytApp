@@ -2,12 +2,15 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
+import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +35,18 @@ public class BillController {
     public ResponseEntity<List<BillResponseDto>> getUserBills(@PathVariable Long userId) {
         try {
             List<BillResponseDto> bills = billService.getUserBills(userId);
+            return ResponseEntity.ok(bills);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/user/{email}")
+    public ResponseEntity<List<BillResponseDto>> getUserBillsByEmail(@AuthenticationPrincipal UserDetails userdetails){
+        try {
+            //UserDetails is the object loaded in CustomUserDetailsService
+            String username = userdetails.getUsername();
+            List<BillResponseDto> bills = billService.getUserBillsByEmail(username);
             return ResponseEntity.ok(bills);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

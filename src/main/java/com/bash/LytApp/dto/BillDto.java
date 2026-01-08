@@ -12,6 +12,7 @@ import java.time.chrono.ChronoLocalDate;
 public record BillDto(
         Long userId,
         String meterNumber,
+        String email,
         BigDecimal amount,
         LocalDate dueDate,
         Bill.BillStatus status,

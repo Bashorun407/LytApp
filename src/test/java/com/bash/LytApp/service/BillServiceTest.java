@@ -49,17 +49,19 @@ public class BillServiceTest {
         testUser.setId(1L);
         testUser.setFirstName("John");
         testUser.setLastName("Doe");
-        testUser.setEmail("john.doe@example.com");
+        testUser.setEmail("john.doe@email.com");
 
         testBill = new Bill();
         testBill.setId(1L);
         testBill.setUser(testUser);
+        testBill.setMeterNumber("MTR-234");
+        testBill.setEmail("john.doe@email.com");
         testBill.setAmount(new BigDecimal("150.75"));
         testBill.setDueDate(LocalDate.now().plusDays(30));
         testBill.setStatus(Bill.BillStatus.UNPAID);
         testBill.setIssuedAt(LocalDateTime.now());
 
-        testBillDto = new BillDto(testUser.getId(), "John Doe", new BigDecimal("150.75"),
+        testBillDto = new BillDto(testUser.getId(), "MTR-234", "john.doe@email.com", new BigDecimal("150.75"),
                 LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
         );
     }
@@ -70,6 +72,8 @@ public class BillServiceTest {
         Bill bill2 = new Bill();
         bill2.setId(2L);
         bill2.setUser(testUser);
+        bill2.setMeterNumber("MTR-908");
+        bill2.setEmail("john.doe@email.com");
         bill2.setAmount(new BigDecimal("200.50"));
         bill2.setDueDate(LocalDate.now());
 
@@ -105,7 +109,7 @@ public class BillServiceTest {
     void createBill_WithValidData_ReturnsCreatedBill() {
         // Given
         BillDto newBillDto = new BillDto(
-                testUser.getId(), "John Doe", new BigDecimal("99.99"),
+                testUser.getId(), "MTR-789", "john.doe@email.com", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
 
@@ -132,7 +136,7 @@ public class BillServiceTest {
     void createBill_WithInvalidUser_ThrowsException() {
         // Given
         BillDto newBillDto = new BillDto(
-                 testUser.getId(), "3456787654", new BigDecimal("99.99"),
+                 testUser.getId(), "MTR-567", "john.doe@email.com", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
 
@@ -178,6 +182,8 @@ public class BillServiceTest {
         Bill overdueBill = new Bill();
         overdueBill.setId(2L);
         overdueBill.setUser(testUser);
+        overdueBill.setMeterNumber("MTR-804");
+        overdueBill.setEmail("john.doe@email.com");
         overdueBill.setAmount(new BigDecimal("100.00"));
         overdueBill.setDueDate(LocalDate.now().minusDays(1));
         overdueBill.setStatus(Bill.BillStatus.UNPAID);
@@ -185,6 +191,8 @@ public class BillServiceTest {
         Bill paidBill = new Bill();
         paidBill.setId(3L);
         paidBill.setUser(testUser);
+        paidBill.setMeterNumber("MTR-567");
+        paidBill.setEmail("anne.bill@email.com");
         paidBill.setAmount(new BigDecimal("200.00"));
         paidBill.setDueDate(LocalDate.now().minusDays(1));
         paidBill.setStatus(Bill.BillStatus.PAID);

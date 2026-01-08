@@ -1,5 +1,6 @@
 package com.bash.LytApp.mapper;
 
+import com.bash.LytApp.dto.UserCheckDto;
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.dto.UserUpdateDto;
@@ -47,4 +48,11 @@ public class UserMapper {
                 user.getLastLogin()
         );
     }
+
+//    public static UserCheckDto mapToUserCheckDto(User user){
+//        return new UserCheckDto(
+//                user.getId(),
+//                user.getEmail()
+//        );
+//    }
 }

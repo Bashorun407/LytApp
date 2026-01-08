@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public record BillResponseDto(
         String meterNumber,
+        String email,
         BigDecimal amount,
         LocalDate dueDate,
         Bill.BillStatus status,

@@ -39,11 +39,27 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
+    public List<BillResponseDto> getUserBillsByEmail(String email) {
+        return billRepository.findByEmail(email).stream()
+                .map(BillMapper::mapToBillResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public BillResponseDto getBillById(Long id) {
         Bill bill = billRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bill not found with id: " + id));
         return BillMapper.mapToBillResponseDto(bill);
     }
+
+    @Override
+    public BillResponseDto getBillByEmail(String email) {
+
+        Bill bill = billRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Bill not found with email: " + email));
+        return null;
+    }
+
 
     @Override
     public BillResponseDto createBill(BillDto billDto) {
@@ -53,6 +69,7 @@ public class BillServiceImpl implements BillService {
         Bill bill = new Bill();
         bill.setUser(user);
         bill.setMeterNumber(billDto.meterNumber());
+        bill.setEmail(user.getEmail());
         bill.setAmount(billDto.amount());
         bill.setDueDate(billDto.dueDate());
         bill.setStatus(Bill.BillStatus.UNPAID);

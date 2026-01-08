@@ -11,6 +11,7 @@ public class BillMapper {
 
                 bill.getUser().getId(),
                 bill.getMeterNumber(),
+                bill.getEmail(),
                 bill.getAmount(),
                 bill.getDueDate(),
                 bill.getStatus(),
@@ -21,6 +22,7 @@ public class BillMapper {
     public static BillResponseDto mapToBillResponseDto(Bill bill){
         return new BillResponseDto(
                bill.getMeterNumber(),
+               bill.getEmail(),
                bill.getAmount(),
                bill.getDueDate(),
                bill.getStatus(),
