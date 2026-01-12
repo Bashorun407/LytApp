@@ -58,7 +58,7 @@ public class PaymentServiceTest {
         testBill.setStatus(Bill.BillStatus.UNPAID);
         testBill.setIssuedAt(LocalDateTime.now());
 
-        testBillDto = new BillDto( testUser.getId(), "882982728", new BigDecimal("123.98"),
+        testBillDto = new BillDto( "882982728", new BigDecimal("123.98"),
                 LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
         );
     }
@@ -105,7 +105,7 @@ public class PaymentServiceTest {
     @Test
     void createBill_WithValidData_ReturnsCreatedBill() {
         // Given
-        BillDto newBillDto = new BillDto(testUser.getId(), "John Doe", new BigDecimal("99.99"),
+        BillDto newBillDto = new BillDto("John Doe", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
 
@@ -118,7 +118,7 @@ public class PaymentServiceTest {
         doNothing().when(notificationService).sendBillNotification(anyLong(), anyString());
 
         // When
-        BillResponseDto result = billService.createBill(newBillDto);
+        BillResponseDto result = billService.createBill(newBillDto, testUser.getId());
 
         // Then
         assertNotNull(result);

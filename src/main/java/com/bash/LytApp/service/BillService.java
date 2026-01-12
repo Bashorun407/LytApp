@@ -9,7 +9,7 @@ public interface BillService {
 
     List<BillResponseDto> getUserBills(Long userId);
     BillResponseDto getBillById(Long id);
-    BillResponseDto createBill(BillDto billDto);
+    BillResponseDto createBill(BillDto billDto, Long authenticatedUser);
     BillResponseDto updateBillStatus(Long billId, String status);
     List<BillResponseDto> getOverdueBills();
     List<BillResponseDto> getBillsByStatus(String status);

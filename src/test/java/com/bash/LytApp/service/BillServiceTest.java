@@ -59,7 +59,11 @@ public class BillServiceTest {
         testBill.setStatus(Bill.BillStatus.UNPAID);
         testBill.setIssuedAt(LocalDateTime.now());
 
-        testBillDto = new BillDto(testUser.getId(), "John Doe", new BigDecimal("150.75"),
+//        testBillDto = new BillDto(testUser.getId(), "John Doe", new BigDecimal("150.75"),
+//                LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
+//        );
+
+        testBillDto = new BillDto("John Doe", new BigDecimal("150.75"),
                 LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
         );
     }
@@ -104,11 +108,15 @@ public class BillServiceTest {
     @Test
     void createBill_WithValidData_ReturnsCreatedBill() {
         // Given
+//        BillDto newBillDto = new BillDto(
+//                testUser.getId(), "John Doe", new BigDecimal("99.99"),
+//                LocalDate.now().plusDays(15), testBill.getStatus(), null
+//        );
+
         BillDto newBillDto = new BillDto(
-                testUser.getId(), "John Doe", new BigDecimal("99.99"),
+                 "John Doe", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
-
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(billRepository.save(any(Bill.class))).thenAnswer(invocation -> {
             Bill bill = invocation.getArgument(0);
@@ -118,7 +126,7 @@ public class BillServiceTest {
         doNothing().when(notificationService).sendBillNotification(anyLong(), anyString());
 
         // When
-        BillResponseDto result = billService.createBill(newBillDto);
+        BillResponseDto result = billService.createBill(newBillDto, testUser.getId());
 
         // Then
         assertNotNull(result);
@@ -131,8 +139,13 @@ public class BillServiceTest {
     @Test
     void createBill_WithInvalidUser_ThrowsException() {
         // Given
+//        BillDto newBillDto = new BillDto(
+//                 testUser.getId(), "3456787654", new BigDecimal("99.99"),
+//                LocalDate.now().plusDays(15), testBill.getStatus(), null
+//        );
+
         BillDto newBillDto = new BillDto(
-                 testUser.getId(), "3456787654", new BigDecimal("99.99"),
+                "3456787654", new BigDecimal("99.99"),
                 LocalDate.now().plusDays(15), testBill.getStatus(), null
         );
 
@@ -140,7 +153,7 @@ public class BillServiceTest {
 
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> billService.createBill(newBillDto));
+                () -> billService.createBill(newBillDto, testUser.getId()));
         assertEquals("User not found with id: 1", exception.getMessage());
         verify(billRepository, never()).save(any(Bill.class));
     }

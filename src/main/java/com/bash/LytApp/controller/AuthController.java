@@ -8,7 +8,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,9 +26,10 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
         try {
             AuthResponseDto authResponse = authService.register(registerRequestDto);
-            return ResponseEntity.ok(authResponse);
+            return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("error", e.getMessage()));
         }
     }
 
@@ -35,11 +39,10 @@ public class AuthController {
             AuthResponseDto authResponse = authService.login(loginRequestDto);
             return ResponseEntity.ok(authResponse);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("error", e.getMessage()));
         }
     }
-
-    // Password Reset Endpoints
 
     @PutMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequestDto request) {
@@ -55,11 +58,7 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequestDto request) {
         try {
             PasswordResetResponseDto response = authService.resetPassword(request);
-            if (response.success()) {
-                return ResponseEntity.ok(response);
-            } else {
-                return ResponseEntity.badRequest().body(response);
-            }
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new PasswordResetResponseDto(e.getMessage(), false));
         }
@@ -67,21 +66,10 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
-        try {
-            UserDto currentUserDto = authService.getCurrentUser();
-
-            if (currentUserDto == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
-            }
-            return ResponseEntity.ok(currentUserDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
+        UserDto currentUserDto = authService.getCurrentUser();
+        if (currentUserDto == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
         }
+        return ResponseEntity.ok(currentUserDto);
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Auth endpoint is working!");
-    }
-
 }

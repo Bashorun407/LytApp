@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 
 public record BillDto(
-        Long userId,
+        //Long userId,
         String meterNumber,
         BigDecimal amount,
         LocalDate dueDate,

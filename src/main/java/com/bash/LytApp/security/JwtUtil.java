@@ -1,5 +1,6 @@
 package com.bash.LytApp.security;
 
+import com.bash.LytApp.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -32,6 +33,11 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+    // NEW: Extract the Long ID from the custom claims
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -53,9 +59,11 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    // OPTIMIZED: Accept the User entity to embed the ID into the JWT
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        claims.put("userId", user.getId()); // Store Primary Key in claims
+        return createToken(claims, user.getEmail());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -68,14 +76,19 @@ public class JwtUtil {
                 .compact();
     }
 
+    // OPTIMIZED: Validate using just the username string to avoid redundant DB lookups in the filter
+    public Boolean validateToken(String token, String username) {
+        final String extractedUsername = extractUsername(token);
+        return (extractedUsername.equals(username) && !isTokenExpired(token));
+    }
+
+    // Standard validation if you still need to check against UserDetails
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    // For token refresh or other purposes
     public String generateTokenWithClaims(Map<String, Object> claims, String subject) {
         return createToken(claims, subject);
     }
-
 }

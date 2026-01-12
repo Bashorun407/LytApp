@@ -53,9 +53,9 @@ public class BillController {
     }
 
     @PostMapping
-    public ResponseEntity<BillResponseDto> createBill(@RequestBody BillDto billDto) {
+    public ResponseEntity<BillResponseDto> createBill(@RequestBody BillDto billDto, @AuthenticationPrincipal User currentUser) {
         try {
-            BillResponseDto createdBill = billService.createBill(billDto);
+            BillResponseDto createdBill = billService.createBill(billDto, currentUser.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(createdBill);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -42,19 +43,14 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-
-    // Password reset token expiration time (1 hour)
     private static final int PASSWORD_RESET_TOKEN_EXPIRY_HOURS = 1;
 
+    @Transactional
     public AuthResponseDto login(LoginRequestDto loginRequest) {
         try {
+            // 1. Authenticate credentials
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.email(),
@@ -64,13 +60,12 @@ public class AuthService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // FIX: Cast the principal to UserDetails
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwt = jwtUtil.generateToken(userDetails);
-
-            // Get the full user entity for response
+            // 2. Fetch User Entity (Already verified by authenticationManager)
             User user = userRepository.findByEmail(loginRequest.email())
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // 3. Generate Token using our Optimized JwtUtil (embeds userId in claims)
+            String jwt = jwtUtil.generateToken(user);
 
             return new AuthResponseDto(
                     jwt,
@@ -83,20 +78,15 @@ public class AuthService {
 
         } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid email or password");
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Authentication error: " + e.getMessage());
         }
     }
 
-
+    @Transactional
     public AuthResponseDto register(RegisterRequestDto registerRequest) {
-
-        // Check if email already exists
         if (userRepository.existsByEmail(registerRequest.email())) {
             throw new RuntimeException("Email already exists: " + registerRequest.email());
         }
 
-        // Get or create USER role
         Role userRole = roleRepository.findByName("USER")
                 .orElseGet(() -> {
                     Role newRole = new Role();
@@ -104,7 +94,6 @@ public class AuthService {
                     return roleRepository.save(newRole);
                 });
 
-        // Create new user
         User user = new User();
         user.setFirstName(registerRequest.firstName());
         user.setLastName(registerRequest.lastName());
@@ -114,15 +103,13 @@ public class AuthService {
         user.setEmailVerified(false);
         user.setEnabled(true);
 
+        // 4. Save and use the returned entity immediately
         User savedUser = userRepository.save(user);
 
-        // Generate JWT token for auto-login after registration
-        // FIX: Use UserDetailsService to load the user as UserDetails
-        UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
-        String jwt = jwtUtil.generateToken(userDetails);
+        // 5. Optimized: Generate token without redundant DB hits
+        String jwt = jwtUtil.generateToken(savedUser);
 
-        //Send mail to notify user that they're logged in.
-        emailService.sendVerificationEmail(registerRequest.email(), registerRequest.firstName(), jwt);
+        emailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getFirstName(), jwt);
 
         return new AuthResponseDto(
                 jwt,
@@ -134,79 +121,45 @@ public class AuthService {
         );
     }
 
-
-    //Method to call for forgot password
     public PasswordResetResponseDto forgotPassword(ForgotPasswordRequestDto request) {
         Optional<User> userOptional = userRepository.findByEmail(request.email());
 
         if (userOptional.isEmpty()) {
-            // For security reasons, don't reveal if email exists or not
-            return new PasswordResetResponseDto(
-                    "If the email exists, a password reset link has been sent.",
-                    true
-            );
+            return new PasswordResetResponseDto("If the email exists, a password reset link has been sent.", true);
         }
 
         User user = userOptional.get();
-
-        // Generate reset token
-        String resetToken = generateResetToken();
-        LocalDateTime tokenExpiry = LocalDateTime.now().plusHours(PASSWORD_RESET_TOKEN_EXPIRY_HOURS);
-
-        // Save token and expiry to user (you might want to create separate table for reset tokens)
+        String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
-        user.setResetTokenExpiry(tokenExpiry);
+        user.setResetTokenExpiry(LocalDateTime.now().plusHours(PASSWORD_RESET_TOKEN_EXPIRY_HOURS));
         userRepository.save(user);
 
-        // Send password reset email
         try {
-            emailService.sendPasswordResetEmail(
-                    user.getEmail(),
-                    user.getFirstName(),
-                    resetToken
-            );
-
-            return new PasswordResetResponseDto(
-                    "Password reset email sent successfully. Please check your inbox.",
-                    true
-            );
-
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getFirstName(), resetToken);
+            return new PasswordResetResponseDto("Password reset email sent successfully.", true);
         } catch (Exception e) {
             throw new RuntimeException("Failed to send password reset email: " + e.getMessage());
         }
     }
-    //Method to call to reset password
+
+    @Transactional
     public PasswordResetResponseDto resetPassword(ResetPasswordRequestDto request) {
-        // Find user by reset token
-        Optional<User> userOptional = userRepository.findByResetToken(request.token());
+        User user = userRepository.findByResetToken(request.token())
+                .orElseThrow(() -> new RuntimeException("Invalid or expired reset token."));
 
-        if (userOptional.isEmpty()) {
-            return new PasswordResetResponseDto("Invalid or expired reset token.", false);
-        }
-
-        User user = userOptional.get();
-
-        // Check if token is expired
         if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
-            // Clear the expired token
             user.setResetToken(null);
             user.setResetTokenExpiry(null);
             userRepository.save(user);
-
-            return new PasswordResetResponseDto("Reset token has expired. Please request a new one.", false);
+            throw new RuntimeException("Reset token has expired.");
         }
 
-        // Update password
         user.setHashedPassword(passwordEncoder.encode(request.newPassword()));
-        user.setResetToken(null); // Clear the used token
+        user.setResetToken(null);
         user.setResetTokenExpiry(null);
         userRepository.save(user);
 
-        return new PasswordResetResponseDto("Password reset successfully. You can now login with your new password.", true);
-    }
-
-    private String generateResetToken() {
-        return UUID.randomUUID().toString();
+        return new PasswordResetResponseDto("Password reset successfully.", true);
     }
 
     public UserDto getCurrentUser() {
@@ -214,13 +167,8 @@ public class AuthService {
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
-
-
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElse(null);
-        UserDto userDto = UserMapper.mapToUserDto(user);
-        //return userRepository.findByEmail(email).orElse(null);
-
-        return userDto;
+        return userRepository.findByEmail(authentication.getName())
+                .map(UserMapper::mapToUserDto)
+                .orElse(null);
     }
 }
