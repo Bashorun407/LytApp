@@ -3,6 +3,7 @@ package com.bash.LytApp.controller;
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,8 +34,7 @@ public class BillController {
     @GetMapping("/my-bills")
     public ResponseEntity<List<BillResponseDto>> getUserBills(@AuthenticationPrincipal User currentUser) {
         try {
-            // currentUser is the full Entity loaded by CustomUserDetailsService
-            // No parsing needed, no ID passed from Postman/Frontend
+            // Identity extracted from JWT (0 SQL hits)
             List<BillResponseDto> bills = billService.getUserBills(currentUser.getId());
             return ResponseEntity.ok(bills);
         } catch (Exception e) {
@@ -53,8 +53,12 @@ public class BillController {
     }
 
     @PostMapping
-    public ResponseEntity<BillResponseDto> createBill(@RequestBody BillDto billDto, @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<BillResponseDto> createBill(
+            @RequestBody BillDto billDto,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
         try {
+            // ID derived from token claims
             BillResponseDto createdBill = billService.createBill(billDto, currentUser.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(createdBill);
         } catch (RuntimeException e) {

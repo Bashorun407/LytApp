@@ -17,10 +17,6 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -32,19 +28,30 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
+        Long userId = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+                userId = jwtUtil.extractUserId(jwt); // Extract the ID we added in Step 1
+            } catch (Exception e) {
+                logger.error("Could not extract identity from token");
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            // SENIOR OPTIMIZATION:
+            // We build the Principal from the JWT data alone. 0 SQL queries here.
+            UserPrincipal principal = new UserPrincipal(userId, username);
 
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (jwtUtil.validateToken(jwt, username)) {
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // SecurityContext now holds the userId and email without hitting the DB
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

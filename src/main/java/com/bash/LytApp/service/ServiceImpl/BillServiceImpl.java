@@ -46,24 +46,27 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public BillResponseDto createBill(BillDto billDto, Long authenticatedUser) {
-        User user = userRepository.findById(authenticatedUser)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + authenticatedUser));
+    @Transactional
+    public BillResponseDto createBill(BillDto billDto, Long authenticatedUserId) {
+        // SENIOR OPTIMIZATION: Use a Proxy.
+        // This avoids a SELECT on the 'users' table and prevents the 'email' error.
+        User userProxy = userRepository.getReferenceById(authenticatedUserId);
 
         Bill bill = new Bill();
-        bill.setUser(user);
+        bill.setUser(userProxy); // Sets the user_id FK only
         bill.setMeterNumber(billDto.meterNumber());
         bill.setAmount(billDto.amount());
         bill.setDueDate(billDto.dueDate());
         bill.setStatus(Bill.BillStatus.UNPAID);
         bill.setIssuedAt(LocalDateTime.now());
 
+        // This is now the ONLY query executed
         Bill savedBill = billRepository.save(bill);
 
-        // Send notification to user
+        // Use the ID directly (no need to fetch user email/name here)
         String message = String.format("New bill issued: $%.2f due on %s",
                 billDto.amount(), billDto.dueDate());
-        notificationService.sendBillNotification(user.getId(), message);
+        notificationService.sendBillNotification(authenticatedUserId, message);
 
         return BillMapper.mapToBillResponseDto(savedBill);
     }
