@@ -10,12 +10,10 @@ import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 
 public record BillDto(
-        //Long userId,
+
         String meterNumber,
         BigDecimal amount,
-        LocalDate dueDate,
-        Bill.BillStatus status
-        //LocalDateTime issuedAt
+        LocalDate dueDate
 ) {
     public BillDto {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {

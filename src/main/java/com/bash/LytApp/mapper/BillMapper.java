@@ -9,12 +9,9 @@ public class BillMapper {
     public static BillDto mapToBillDto(Bill bill){
         return new BillDto(
 
-                //bill.getUser().getId(),
                 bill.getMeterNumber(),
                 bill.getAmount(),
-                bill.getDueDate(),
-                bill.getStatus()
-                //bill.getIssuedAt()
+                bill.getDueDate()
         );
     }
 
@@ -22,9 +19,7 @@ public class BillMapper {
         return new BillResponseDto(
                bill.getMeterNumber(),
                bill.getAmount(),
-               bill.getDueDate(),
-               bill.getStatus(),
-               bill.getIssuedAt()
+               bill.getDueDate()
         );
     }
 
