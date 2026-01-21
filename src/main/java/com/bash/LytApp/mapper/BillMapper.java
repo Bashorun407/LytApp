@@ -13,8 +13,8 @@ public class BillMapper {
                 bill.getMeterNumber(),
                 bill.getAmount(),
                 bill.getDueDate(),
-                bill.getStatus(),
-                bill.getIssuedAt()
+                bill.getStatus()
+                //bill.getIssuedAt()
         );
     }
 

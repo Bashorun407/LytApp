@@ -6,14 +6,12 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 public record UserDto(
-        //Long id,
         String firstName,
         String lastName,
         String email,
         String hashedPassword,
         LocalDateTime creationDate,
         LocalDateTime modifiedDate,
-        //Role role
         String role,
         boolean email_verified,
         boolean two_factor_enabled,

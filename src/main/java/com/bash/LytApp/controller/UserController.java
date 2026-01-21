@@ -3,6 +3,7 @@ package com.bash.LytApp.controller;
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.dto.UserUpdateDto;
+import com.bash.LytApp.security.AuthenticatedUser;
 import com.bash.LytApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,18 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:63342")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
 
+    private final UserService userService;
+    private final AuthenticatedUser authenticatedUser;
+
+    public UserController(UserService userService, AuthenticatedUser authenticatedUser) {
+        this.userService = userService;
+        this.authenticatedUser = authenticatedUser;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         try {
@@ -31,25 +41,17 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getUserProfile() {
         try {
-            UserDto user = userService.getUserById(id);
+            Long userId = authenticatedUser.getUserId();
+            UserDto user = userService.getUserById(userId);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
-        try {
-            UserDto user = userService.getUserByEmail(email);
-            return ResponseEntity.ok(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserCreateDto userCreateDto) {
@@ -61,22 +63,24 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
+    @PutMapping("/update")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
 
         //running updates with the try/catch statement
            try {
-              UserDto updatedUser = userService.updateUser(id, userUpdateDto);
+               Long userId = authenticatedUser.getUserId();
+              UserDto updatedUser = userService.updateUser(userId, userUpdateDto);
               return ResponseEntity.ok(updatedUser);
           } catch (RuntimeException e) {
               return ResponseEntity.notFound().build();
           }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser() {
         try {
-            userService.deleteUser(id);
+            Long userId = authenticatedUser.getUserId();
+            userService.deleteUser(userId);
             return ResponseEntity.ok("Deleted!");
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

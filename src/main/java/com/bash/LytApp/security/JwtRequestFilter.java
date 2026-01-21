@@ -13,48 +13,62 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+
+    public JwtRequestFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain)
+            throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
-        String username = null;
-        String jwt = null;
-        Long userId = null;
+        if (authorizationHeader != null
+                && authorizationHeader.startsWith("Bearer ")
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
+            String jwt = authorizationHeader.substring(7);
+
             try {
-                username = jwtUtil.extractUsername(jwt);
-                userId = jwtUtil.extractUserId(jwt); // Extract the ID we added in Step 1
+                String username = jwtUtil.extractUsername(jwt);
+                Long userId = jwtUtil.extractUserId(jwt);
+                List<String> roles = jwtUtil.extractRoles(jwt); // <-- NEW
+
+                if (username != null && jwtUtil.validateToken(jwt, username)) {
+
+                    UserPrincipal principal = new UserPrincipal(userId, username, roles); // <-- UPDATED
+
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    principal,
+                                    null,
+                                    principal.getAuthorities()
+                            );
+
+                    auth.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(auth);
+                }
+
             } catch (Exception e) {
-                logger.error("Could not extract identity from token");
+                logger.warn("JWT authentication failed", e);
             }
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // SENIOR OPTIMIZATION:
-            // We build the Principal from the JWT data alone. 0 SQL queries here.
-            UserPrincipal principal = new UserPrincipal(userId, username);
-
-            if (jwtUtil.validateToken(jwt, username)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // SecurityContext now holds the userId and email without hitting the DB
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
         chain.doFilter(request, response);
     }
+
 }

@@ -14,8 +14,8 @@ public record BillDto(
         String meterNumber,
         BigDecimal amount,
         LocalDate dueDate,
-        Bill.BillStatus status,
-        LocalDateTime issuedAt
+        Bill.BillStatus status
+        //LocalDateTime issuedAt
 ) {
     public BillDto {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {

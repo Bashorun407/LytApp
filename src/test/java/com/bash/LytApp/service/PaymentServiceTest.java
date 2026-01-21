@@ -59,7 +59,7 @@ public class PaymentServiceTest {
         testBill.setIssuedAt(LocalDateTime.now());
 
         testBillDto = new BillDto( "882982728", new BigDecimal("123.98"),
-                LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
+                LocalDate.now().plusDays(30), testBill.getStatus()
         );
     }
 
@@ -106,7 +106,7 @@ public class PaymentServiceTest {
     void createBill_WithValidData_ReturnsCreatedBill() {
         // Given
         BillDto newBillDto = new BillDto("John Doe", new BigDecimal("99.99"),
-                LocalDate.now().plusDays(15), testBill.getStatus(), null
+                LocalDate.now().plusDays(15), testBill.getStatus()
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));

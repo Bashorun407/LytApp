@@ -11,9 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -33,16 +31,19 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // NEW: Extract the Long ID from the custom claims
     public Long extractUserId(String token) {
         return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
+
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> claims.get("roles", List.class));
     }
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -59,10 +60,17 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // OPTIMIZED: Accept the User entity to embed the ID into the JWT
+    // Generate token with a single role
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId()); // Store Primary Key in claims
+        claims.put("userId", user.getId());
+
+        if (user.getRole() != null) {
+            claims.put("roles", List.of(user.getRole().getName())); // SINGLE role wrapped in a list
+        } else {
+            claims.put("roles", Collections.emptyList());
+        }
+
         return createToken(claims, user.getEmail());
     }
 
@@ -76,13 +84,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    // OPTIMIZED: Validate using just the username string to avoid redundant DB lookups in the filter
     public Boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
-    // Standard validation if you still need to check against UserDetails
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -91,4 +97,5 @@ public class JwtUtil {
     public String generateTokenWithClaims(Map<String, Object> claims, String subject) {
         return createToken(claims, subject);
     }
+
 }

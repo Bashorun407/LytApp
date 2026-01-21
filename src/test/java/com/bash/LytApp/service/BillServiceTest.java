@@ -64,7 +64,7 @@ public class BillServiceTest {
 //        );
 
         testBillDto = new BillDto("John Doe", new BigDecimal("150.75"),
-                LocalDate.now().plusDays(30), testBill.getStatus(), LocalDateTime.now()
+                LocalDate.now().plusDays(30), testBill.getStatus()
         );
     }
 
@@ -115,7 +115,7 @@ public class BillServiceTest {
 
         BillDto newBillDto = new BillDto(
                  "John Doe", new BigDecimal("99.99"),
-                LocalDate.now().plusDays(15), testBill.getStatus(), null
+                LocalDate.now().plusDays(15), testBill.getStatus()
         );
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(billRepository.save(any(Bill.class))).thenAnswer(invocation -> {
@@ -146,7 +146,7 @@ public class BillServiceTest {
 
         BillDto newBillDto = new BillDto(
                 "3456787654", new BigDecimal("99.99"),
-                LocalDate.now().plusDays(15), testBill.getStatus(), null
+                LocalDate.now().plusDays(15), testBill.getStatus()
         );
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
