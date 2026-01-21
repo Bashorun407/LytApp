@@ -3,8 +3,10 @@ package com.bash.LytApp.controller;
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.security.AuthenticatedUser;
 import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.BillService;
+import com.bash.LytApp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,13 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:63342")
 public class BillController {
 
-    @Autowired
-    private BillService billService;
+    private final BillService billService;
+    private final AuthenticatedUser authenticatedUser;
+
+    public BillController(BillService billService, AuthenticatedUser authenticatedUser) {
+        this.billService = billService;
+        this.authenticatedUser = authenticatedUser;
+    }
 
     @Operation(
             summary = "Get all the bills for a specific user by user ID"
@@ -32,34 +39,33 @@ public class BillController {
             description = "HTTP Status List"
     )
     @GetMapping("/my-bills")
-    public ResponseEntity<List<BillResponseDto>> getUserBills(@AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<List<BillResponseDto>> getUserBills() {
         try {
+            Long userId = authenticatedUser.getUserId();
             // Identity extracted from JWT (0 SQL hits)
-            List<BillResponseDto> bills = billService.getUserBills(currentUser.getId());
+            List<BillResponseDto> bills = billService.getUserBills(userId);
             return ResponseEntity.ok(bills);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BillResponseDto> getBillById(@PathVariable Long id) {
+    @GetMapping("/{meterNumber}")
+    public ResponseEntity<List<BillResponseDto>> getBillsByMeterNumber(@PathVariable String meterNumber) {
         try {
-            BillResponseDto bill = billService.getBillById(id);
-            return ResponseEntity.ok(bill);
+            List<BillResponseDto> bills = billService.getBillsByMeterNumber(meterNumber);
+            return ResponseEntity.ok(bills);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<BillResponseDto> createBill(
-            @RequestBody BillDto billDto,
-            @AuthenticationPrincipal UserPrincipal currentUser
-    ) {
+    public ResponseEntity<BillResponseDto> createBill(@RequestBody BillDto billDto) {
         try {
+            Long userId = authenticatedUser.getUserId();
             // ID derived from token claims
-            BillResponseDto createdBill = billService.createBill(billDto, currentUser.getId());
+            BillResponseDto createdBill = billService.createBill(billDto, userId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdBill);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

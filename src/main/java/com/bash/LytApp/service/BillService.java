@@ -8,7 +8,7 @@ import java.util.List;
 public interface BillService {
 
     List<BillResponseDto> getUserBills(Long userId);
-    BillResponseDto getBillById(Long id);
+    List<BillResponseDto> getBillsByMeterNumber(String meterNumber);
     BillResponseDto createBill(BillDto billDto, Long authenticatedUser);
     BillResponseDto updateBillStatus(Long billId, String status);
     List<BillResponseDto> getOverdueBills();

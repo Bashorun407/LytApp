@@ -39,10 +39,10 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public BillResponseDto getBillById(Long id) {
-        Bill bill = billRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bill not found with id: " + id));
-        return BillMapper.mapToBillResponseDto(bill);
+    public List<BillResponseDto> getBillsByMeterNumber(String meterNumber) {
+        return billRepository.findByMeterNumber(meterNumber)
+                .stream().map(BillMapper::mapToBillResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -57,8 +57,6 @@ public class BillServiceImpl implements BillService {
         bill.setMeterNumber(billDto.meterNumber());
         bill.setAmount(billDto.amount());
         bill.setDueDate(billDto.dueDate());
-        bill.setStatus(Bill.BillStatus.UNPAID);
-        bill.setIssuedAt(LocalDateTime.now());
 
         // This is now the ONLY query executed
         Bill savedBill = billRepository.save(bill);
