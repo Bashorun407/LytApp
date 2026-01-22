@@ -45,7 +45,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 if (username != null && jwtUtil.validateToken(jwt, username)) {
 
-                    UserPrincipal principal = new UserPrincipal(userId, username, roles); // <-- UPDATED
+                    UserPrincipal principal = new UserPrincipal(userId, username,null,  roles); // <-- UPDATED
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(

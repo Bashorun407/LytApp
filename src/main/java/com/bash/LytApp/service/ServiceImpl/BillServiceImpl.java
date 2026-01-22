@@ -50,10 +50,10 @@ public class BillServiceImpl implements BillService {
     public BillResponseDto createBill(BillDto billDto, Long authenticatedUserId) {
         // SENIOR OPTIMIZATION: Use a Proxy.
         // This avoids a SELECT on the 'users' table and prevents the 'email' error.
-       User user = userRepository.getReferenceById(authenticatedUserId);
+       //User user = userRepository.getReferenceById(authenticatedUserId);
 
-//        User user = userRepository.findById(authenticatedUserId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
+       User user = userRepository.findById(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         Bill bill = new Bill();
         bill.setUser(user); // Sets the user_id FK only
         bill.setMeterNumber(billDto.meterNumber());

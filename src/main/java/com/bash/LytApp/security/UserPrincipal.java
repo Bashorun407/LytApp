@@ -10,11 +10,13 @@ import java.util.List;
 public class UserPrincipal implements UserDetails {
     private final Long id;
     private final String email;
+    private final String password;   // ✅ ADD THIS
     private final List<String> roles;
 
-    public UserPrincipal(Long id, String email, List<String> roles) {
+    public UserPrincipal(Long id, String email, String password, List<String> roles) {
         this.id = id;
         this.email = email;
+        this.password = password;
         this.roles = roles;
     }
 
@@ -29,13 +31,13 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null; // Not needed for JWT-based auth
+        return password; // ✅ MUST return encoded password
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role)) // Prefix required by Spring Security
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .toList();
     }
 
