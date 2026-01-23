@@ -48,33 +48,31 @@ public class BillServiceImpl implements BillService {
     @Override
     @Transactional
     public BillResponseDto createBill(BillDto billDto, Long authenticatedUserId) {
-        // SENIOR OPTIMIZATION: Use a Proxy.
-        // This avoids a SELECT on the 'users' table and prevents the 'email' error.
-       //User user = userRepository.getReferenceById(authenticatedUserId);
+        // Use getReferenceById to avoid unnecessary SELECT
+        User user = userRepository.getReferenceById(authenticatedUserId);
 
-       User user = userRepository.findById(authenticatedUserId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Bill bill = new Bill();
-        bill.setUser(user); // Sets the user_id FK only
-        bill.setMeterNumber(billDto.meterNumber());
-        bill.setAmount(billDto.amount());
-        bill.setDueDate(billDto.dueDate());
+        // Use constructor for cleaner initialization
+        Bill bill = new Bill(
+                user,                       // Sets the user (FK only)
+                billDto.meterNumber(),
+                billDto.amount(),
+                billDto.dueDate()
+        );
 
-        //To debug
-        //System.out.println("User id: " + bill.getUser().getId());
-        //System.out.println("Is user entity managed? " + entityManager.contains(bill.getUser()));
-
-
-        // This is now the ONLY query executed
+        // Save the bill (only one query executed)
         Bill savedBill = billRepository.save(bill);
 
-        // Use the ID directly (no need to fetch user email/name here)
-        String message = String.format("New bill issued: $%.2f due on %s",
-                billDto.amount(), billDto.dueDate());
+        // Send notification using just the user ID
+        String message = String.format(
+                "New bill issued: $%.2f due on %s",
+                billDto.amount(),
+                billDto.dueDate()
+        );
         notificationService.sendBillNotification(authenticatedUserId, message);
 
         return BillMapper.mapToBillResponseDto(savedBill);
     }
+
 
     @Override
     public BillResponseDto updateBillStatus(Long billId, String status) {
@@ -104,9 +102,11 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<BillResponseDto> getBillsByStatus(String status) {try {
+    public List<BillResponseDto> getBillsByStatus(String status) {
+        try {
             Bill.BillStatus billStatus = Bill.BillStatus.valueOf(status.toUpperCase());
-            return billRepository.findByStatus(billStatus).stream()
+            return billRepository.findByStatus(billStatus)
+                    .stream()
                     .map(BillMapper::mapToBillResponseDto)
                     .collect(Collectors.toList());
         } catch (IllegalArgumentException e) {
