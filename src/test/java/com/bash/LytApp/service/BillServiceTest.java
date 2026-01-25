@@ -2,6 +2,7 @@ package com.bash.LytApp.service;
 
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
+import com.bash.LytApp.dto.BillUpdateResponseDto;
 import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.entity.BillStatus;
 import com.bash.LytApp.entity.User;
@@ -162,7 +163,7 @@ public class BillServiceTest {
         when(billRepository.save(any(Bill.class))).thenReturn(testBill);
 
         // When
-        BillResponseDto result = billService.updateBillStatus(1L, "PAID");
+        BillUpdateResponseDto result = billService.updateBillStatus(1L, "PAID");
 
         // Then
         assertNotNull(result);

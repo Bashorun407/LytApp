@@ -2,6 +2,7 @@ package com.bash.LytApp.service.ServiceImpl;
 
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
+import com.bash.LytApp.dto.BillUpdateResponseDto;
 import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.entity.BillStatus;
 import com.bash.LytApp.entity.User;
@@ -69,11 +70,11 @@ public class BillServiceImpl implements BillService {
 
 
     @Override
-    public BillResponseDto updateBillStatus(Long billId, String status) {
+    public BillUpdateResponseDto updateBillStatus(Long billId, String status) {
         Bill bill = billRepository.findById(billId)
                 .orElseThrow(() -> new RuntimeException("Bill not found"));
         bill.setStatus(BillStatus.valueOf(status.toUpperCase()));
-        return BillMapper.mapToBillResponseDto(billRepository.save(bill));
+        return BillMapper.mapToBillUpdateResponseDto(billRepository.save(bill));
     }
 
     @Override

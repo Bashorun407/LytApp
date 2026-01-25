@@ -2,6 +2,7 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
+import com.bash.LytApp.dto.BillUpdateResponseDto;
 import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,11 +81,11 @@ public class BillController {
     @Operation(summary = "Update the status of a specific bill")
     @ApiResponse(responseCode = "200", description = "Bill updated successfully")
     @PutMapping("/{billId}/status")
-    public ResponseEntity<BillResponseDto> updateBillStatus(
+    public ResponseEntity<BillUpdateResponseDto> updateBillStatus(
             @PathVariable Long billId,
             @RequestParam String status) {
         try {
-            BillResponseDto updatedBill = billService.updateBillStatus(billId, status);
+            BillUpdateResponseDto updatedBill = billService.updateBillStatus(billId, status);
             return ResponseEntity.ok(updatedBill);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

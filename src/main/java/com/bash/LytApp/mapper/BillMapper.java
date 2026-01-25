@@ -2,6 +2,7 @@ package com.bash.LytApp.mapper;
 
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
+import com.bash.LytApp.dto.BillUpdateResponseDto;
 import com.bash.LytApp.entity.Bill;
 
 public class BillMapper {
@@ -20,6 +21,14 @@ public class BillMapper {
                bill.getMeterNumber(),
                bill.getAmount(),
                bill.getDueDate()
+        );
+    }
+
+    public static BillUpdateResponseDto mapToBillUpdateResponseDto(Bill bill){
+        return new BillUpdateResponseDto(
+                bill.getMeterNumber(),
+                bill.getAmount(),
+                bill.getStatus()
         );
     }
 
