@@ -91,20 +91,8 @@ public class BillController {
         }
     }
 
-//    @Operation(summary = "Get all overdue bills")
-//    @ApiResponse(responseCode = "200", description = "List of overdue bills")
-//    @GetMapping("/overdue")
-//    public ResponseEntity<List<BillResponseDto>> getOverdueBills() {
-//        try {
-//            List<BillResponseDto> overdueBills = billService.getOverdueBills();
-//            return ResponseEntity.ok(overdueBills);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
-
-    @Operation(summary = "Get bills by status (PAID/UNPAID)")
-    @ApiResponse(responseCode = "200", description = "List of bills by status (i.e. UNPAID, PAID")
+    @Operation(summary = "Get bills by status (PAID/UNPAID/OVERDUE)")
+    @ApiResponse(responseCode = "200", description = "List of bills by status (i.e. UNPAID, PAID, OVERDUE")
     @GetMapping("/status/{status}")
     public ResponseEntity<List<BillResponseDto>> getBillsByStatus(@PathVariable String status) {
         try {

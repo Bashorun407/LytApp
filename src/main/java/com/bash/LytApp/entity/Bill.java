@@ -37,9 +37,9 @@ public class Bill {
 
     private LocalDateTime issuedAt;
 
-    public enum BillStatus {
-        PAID, UNPAID
-    }
+//    public enum BillStatus {
+//        PAID, UNPAID, OVERDUE
+//    }
 
     // Constructor for Service usage
     public Bill(User user, String meterNumber, BigDecimal amount, LocalDate dueDate) {

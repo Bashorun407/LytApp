@@ -14,7 +14,7 @@ class BillTest {
     void bill_DefaultConstructor_SetsIssuedAtAndStatus() {
         Bill bill = new Bill();
         assertNotNull(bill.getIssuedAt());
-        assertEquals(Bill.BillStatus.UNPAID, bill.getStatus());
+        assertEquals(BillStatus.UNPAID, bill.getStatus());
     }
 
     @Test
@@ -58,7 +58,7 @@ class BillTest {
         bill.setMeterNumber("234L");
         bill.setAmount(new BigDecimal("150.75"));
         bill.setDueDate(LocalDate.now().plusDays(30));
-        bill.setStatus(Bill.BillStatus.UNPAID);
+        bill.setStatus(BillStatus.UNPAID);
         bill.setIssuedAt(LocalDateTime.now());
 
         // Then
@@ -66,16 +66,16 @@ class BillTest {
         assertEquals(user, bill.getUser());
         assertEquals("234L", bill.getMeterNumber());
         assertEquals(new BigDecimal("150.75"), bill.getAmount());
-        assertEquals(Bill.BillStatus.UNPAID, bill.getStatus());
+        assertEquals(BillStatus.UNPAID, bill.getStatus());
         assertNotNull(bill.getIssuedAt());
     }
 
     @Test
     void billStatus_EnumValues_Correct() {
         // When & Then
-        assertEquals("PAID", Bill.BillStatus.PAID.toString());
-        assertEquals("UNPAID", Bill.BillStatus.UNPAID.toString());
-        assertEquals("OVERDUE", Bill.BillStatus.OVERDUE.toString());
+        assertEquals("PAID", BillStatus.PAID.toString());
+        assertEquals("UNPAID", BillStatus.UNPAID.toString());
+        assertEquals("OVERDUE", BillStatus.OVERDUE.toString());
     }
 
     @Test

@@ -23,7 +23,4 @@ public record BillDto(
             throw new IllegalArgumentException("Due date cannot be null and must be greater than issue date");
         }
     }
-    public enum BillStatus {
-        PAID, UNPAID, OVERDUE
-    }
 }

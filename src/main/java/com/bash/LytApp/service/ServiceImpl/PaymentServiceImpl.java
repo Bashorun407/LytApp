@@ -3,6 +3,7 @@ package com.bash.LytApp.service.ServiceImpl;
 import com.bash.LytApp.dto.PaymentRequestDto;
 import com.bash.LytApp.dto.PaymentResponseDto;
 import com.bash.LytApp.entity.Bill;
+import com.bash.LytApp.entity.BillStatus;
 import com.bash.LytApp.entity.Payment;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.mapper.PaymentMapper;
@@ -54,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // Validate bill is not already paid
-        if (bill.getStatus() == Bill.BillStatus.PAID) {
+        if (bill.getStatus() == BillStatus.PAID) {
             throw new RuntimeException("Bill is already paid");
         }
 
@@ -72,7 +73,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment savedPayment = paymentRepository.save(payment);
 
         // Update bill status to PAID
-        bill.setStatus(Bill.BillStatus.PAID);
+        bill.setStatus(BillStatus.PAID);
         billRepository.save(bill);
 
         // Send payment confirmation notification

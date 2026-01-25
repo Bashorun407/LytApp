@@ -1,6 +1,7 @@
 package com.bash.LytApp.repository;
 
 import com.bash.LytApp.entity.Bill;
+import com.bash.LytApp.entity.BillStatus;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +57,7 @@ public class BillRepositoryTest {
         bill1.setMeterNumber("789kjj");
         bill1.setAmount(new BigDecimal("100.50"));
         bill1.setDueDate(LocalDate.now().plusDays(15));
-        bill1.setStatus(Bill.BillStatus.UNPAID);
+        bill1.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill1);
 
         Bill bill2 = new Bill();
@@ -64,7 +65,7 @@ public class BillRepositoryTest {
         bill2.setMeterNumber("234OL");
         bill2.setAmount(new BigDecimal("200.75"));
         bill2.setDueDate(LocalDate.now().plusDays(30));
-        bill2.setStatus(Bill.BillStatus.UNPAID);
+        bill2.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill2);
 
         // When
@@ -82,7 +83,7 @@ public class BillRepositoryTest {
         bill1.setMeterNumber("789kjj");
         bill1.setAmount(new BigDecimal("100.50"));
         bill1.setDueDate(LocalDate.now().plusDays(15));
-        bill1.setStatus(Bill.BillStatus.UNPAID);
+        bill1.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill1);
 
         Bill bill2 = new Bill();
@@ -90,7 +91,7 @@ public class BillRepositoryTest {
         bill2.setMeterNumber("234OL");
         bill2.setAmount(new BigDecimal("200.75"));
         bill2.setDueDate(LocalDate.now().plusDays(30));
-        bill2.setStatus(Bill.BillStatus.UNPAID);
+        bill2.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill2);
 
         // When
@@ -108,7 +109,7 @@ public class BillRepositoryTest {
         bill1.setMeterNumber("234UT");
         bill1.setAmount(new BigDecimal("100.50"));
         bill1.setDueDate(LocalDate.now().plusDays(15));
-        bill1.setStatus(Bill.BillStatus.UNPAID);
+        bill1.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill1);
 
         Bill bill2 = new Bill();
@@ -116,7 +117,7 @@ public class BillRepositoryTest {
         bill2.setMeterNumber("439UM");
         bill2.setAmount(new BigDecimal("200.75"));
         bill2.setDueDate(LocalDate.now().plusDays(30));
-        bill2.setStatus(Bill.BillStatus.UNPAID);
+        bill2.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill2);
 
         // When
@@ -138,7 +139,7 @@ public class BillRepositoryTest {
         bill1.setMeterNumber("234UT");
         bill1.setAmount(new BigDecimal("100.50"));
         bill1.setDueDate(LocalDate.now().plusDays(15));
-        bill1.setStatus(Bill.BillStatus.UNPAID);
+        bill1.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill1);
 
         Bill bill2 = new Bill();
@@ -146,7 +147,7 @@ public class BillRepositoryTest {
         bill2.setMeterNumber("439UM");
         bill2.setAmount(new BigDecimal("200.75"));
         bill2.setDueDate(LocalDate.now().plusDays(30));
-        bill2.setStatus(Bill.BillStatus.UNPAID);
+        bill2.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill2);
 
         // When
@@ -172,7 +173,7 @@ public class BillRepositoryTest {
         unpaidBill.setMeterNumber("987L");
         unpaidBill.setAmount(new BigDecimal("150.00"));
         unpaidBill.setDueDate(LocalDate.now().plusDays(10));
-        unpaidBill.setStatus(Bill.BillStatus.UNPAID);
+        unpaidBill.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(unpaidBill);
 
         Bill paidBill = new Bill();
@@ -180,21 +181,21 @@ public class BillRepositoryTest {
         paidBill.setMeterNumber("987L");
         paidBill.setAmount(new BigDecimal("250.00"));
         paidBill.setDueDate(LocalDate.now().plusDays(5));
-        paidBill.setStatus(Bill.BillStatus.PAID);
+        paidBill.setStatus(BillStatus.PAID);
         entityManager.persistAndFlush(paidBill);
 
         // When
         List<Bill> unpaidBills = billRepository.findByUserIdAndStatus(
-                testUser.getId(), Bill.BillStatus.UNPAID);
+                testUser.getId(), BillStatus.UNPAID);
         List<Bill> paidBills = billRepository.findByUserIdAndStatus(
-                testUser.getId(), Bill.BillStatus.PAID);
+                testUser.getId(), BillStatus.PAID);
 
         // Then
         assertEquals(1, unpaidBills.size());
         assertEquals(1, paidBills.size());
         assertEquals("987L", unpaidBills.get(0).getMeterNumber());
-        assertEquals(Bill.BillStatus.UNPAID, unpaidBills.get(0).getStatus());
-        assertEquals(Bill.BillStatus.PAID, paidBills.get(0).getStatus());
+        assertEquals(BillStatus.UNPAID, unpaidBills.get(0).getStatus());
+        assertEquals(BillStatus.PAID, paidBills.get(0).getStatus());
     }
 
     @Test
@@ -213,30 +214,30 @@ public class BillRepositoryTest {
         bill1.setUser(testUser);
         bill1.setMeterNumber("998L");
         bill1.setAmount(new BigDecimal("100.00"));
-        bill1.setStatus(Bill.BillStatus.UNPAID);
+        bill1.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill1);
 
         Bill bill2 = new Bill();
         bill2.setUser(anotherUser);
         bill2.setMeterNumber("998L");
         bill2.setAmount(new BigDecimal("200.00"));
-        bill2.setStatus(Bill.BillStatus.UNPAID);
+        bill2.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(bill2);
 
         Bill bill3 = new Bill();
         bill3.setUser(testUser);
         bill3.setMeterNumber("998L");
         bill3.setAmount(new BigDecimal("300.00"));
-        bill3.setStatus(Bill.BillStatus.PAID);
+        bill3.setStatus(BillStatus.PAID);
         entityManager.persistAndFlush(bill3);
 
         // When
-        List<Bill> unpaidBills = billRepository.findByStatus(Bill.BillStatus.UNPAID);
+        List<Bill> unpaidBills = billRepository.findByStatus(BillStatus.UNPAID);
 
         // Then
         assertEquals(2, unpaidBills.size());
         assertTrue(unpaidBills.stream().allMatch(bill ->
-                bill.getStatus() == Bill.BillStatus.UNPAID));
+                bill.getStatus() == BillStatus.UNPAID));
     }
 
 }

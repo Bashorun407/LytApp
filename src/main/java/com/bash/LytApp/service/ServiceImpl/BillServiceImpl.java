@@ -3,6 +3,7 @@ package com.bash.LytApp.service.ServiceImpl;
 import com.bash.LytApp.dto.BillDto;
 import com.bash.LytApp.dto.BillResponseDto;
 import com.bash.LytApp.entity.Bill;
+import com.bash.LytApp.entity.BillStatus;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.mapper.BillMapper;
 import com.bash.LytApp.repository.BillRepository;
@@ -71,20 +72,13 @@ public class BillServiceImpl implements BillService {
     public BillResponseDto updateBillStatus(Long billId, String status) {
         Bill bill = billRepository.findById(billId)
                 .orElseThrow(() -> new RuntimeException("Bill not found"));
-        bill.setStatus(Bill.BillStatus.valueOf(status.toUpperCase()));
+        bill.setStatus(BillStatus.valueOf(status.toUpperCase()));
         return BillMapper.mapToBillResponseDto(billRepository.save(bill));
     }
 
-
-//    @Override
-//    public List<BillResponseDto> getOverdueBills() {
-//        // simplified for brevity
-//        return List.of();
-//    }
-
     @Override
     public List<BillResponseDto> getBillsByStatus(String status) {
-        return billRepository.findByStatus(Bill.BillStatus.valueOf(status.toUpperCase()))
+        return billRepository.findByStatus(BillStatus.valueOf(status.toUpperCase()))
                 .stream().map(BillMapper::mapToBillResponseDto).collect(Collectors.toList());
     }
 
