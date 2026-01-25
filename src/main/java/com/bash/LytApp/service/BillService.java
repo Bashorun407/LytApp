@@ -11,6 +11,6 @@ public interface BillService {
     List<BillResponseDto> getBillsByMeterNumber(String meterNumber);
     BillResponseDto createBill(BillDto billDto, Long authenticatedUser);
     BillResponseDto updateBillStatus(Long billId, String status);
-    List<BillResponseDto> getOverdueBills();
+//    List<BillResponseDto> getOverdueBills();
     List<BillResponseDto> getBillsByStatus(String status);
 }

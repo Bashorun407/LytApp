@@ -66,6 +66,7 @@ public class BillServiceImpl implements BillService {
                 .map(BillMapper::mapToBillResponseDto).collect(Collectors.toList());
     }
 
+
     @Override
     public BillResponseDto updateBillStatus(Long billId, String status) {
         Bill bill = billRepository.findById(billId)
@@ -74,15 +75,17 @@ public class BillServiceImpl implements BillService {
         return BillMapper.mapToBillResponseDto(billRepository.save(bill));
     }
 
-    @Override
-    public List<BillResponseDto> getOverdueBills() {
-        // simplified for brevity
-        return List.of();
-    }
+
+//    @Override
+//    public List<BillResponseDto> getOverdueBills() {
+//        // simplified for brevity
+//        return List.of();
+//    }
 
     @Override
     public List<BillResponseDto> getBillsByStatus(String status) {
         return billRepository.findByStatus(Bill.BillStatus.valueOf(status.toUpperCase()))
                 .stream().map(BillMapper::mapToBillResponseDto).collect(Collectors.toList());
     }
+
 }
