@@ -2,6 +2,7 @@ package com.bash.LytApp.service;
 
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
+import com.bash.LytApp.dto.UserResponseDto;
 import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
@@ -76,7 +77,7 @@ public class UserServiceTest {
         when(userRepository.findAll()).thenReturn(Arrays.asList(testUser, user2));
 
         // When
-        List<UserDto> users = userService.getAllUsers();
+        List<UserResponseDto> users = userService.getAllUsers();
 
         // Then
         assertEquals(2, users.size());
@@ -91,7 +92,7 @@ public class UserServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
         // When
-        UserDto result = userService.getUserById(1L);
+        UserResponseDto result = userService.getUserById(1L);
 
         // Then
         assertNotNull(result);
@@ -134,7 +135,7 @@ public class UserServiceTest {
         });
 
         // When
-        UserDto result = userService.createUser(newUserDto);
+        UserResponseDto result = userService.createUser(newUserDto);
 
         // Then
         assertNotNull(result);
@@ -199,7 +200,7 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
         // Act
-        UserDto result = userService.createUser(userCreateDto);
+        UserResponseDto result = userService.createUser(userCreateDto);
 
         // Assert
         assertNotNull(result);
@@ -232,7 +233,7 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
         // When
-        UserDto result = userService.updateUser(10L, updateDto);
+        UserResponseDto result = userService.updateUser(10L, updateDto);
 
         // Then
         assertNotNull(result);
@@ -280,7 +281,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
 
         // When
-        UserDto result = userService.getUserByEmail("john.doe@example.com");
+        UserResponseDto result = userService.getUserByEmail("john.doe@example.com");
 
         // Then
         assertNotNull(result);

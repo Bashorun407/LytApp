@@ -2,6 +2,7 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.UserCreateDto;
 import com.bash.LytApp.dto.UserDto;
+import com.bash.LytApp.dto.UserResponseDto;
 import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.security.AuthenticatedUser;
 import com.bash.LytApp.service.UserService;
@@ -29,9 +30,9 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         try {
-            List<UserDto> users = userService.getAllUsers();
+            List<UserResponseDto> users = userService.getAllUsers();
             return ResponseEntity.ok(users);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -39,48 +40,47 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserProfile() {
+    public ResponseEntity<UserResponseDto> getUserProfile() {
         try {
             Long userId = authenticatedUser.getUserId();
-            UserDto user = userService.getUserById(userId);
+            UserResponseDto user = userService.getUserById(userId);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
+//    @PostMapping
+//    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto) {
+//        try {
+//            UserResponseDto createdUser = userService.createUser(userCreateDto);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserCreateDto userCreateDto) {
-        try {
-            UserDto createdUser = userService.createUser(userCreateDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+//    @PutMapping("/update")
+//    public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+//
+//        //running updates with the try/catch statement
+//           try {
+//               Long userId = authenticatedUser.getUserId();
+//              UserResponseDto updatedUser = userService.updateUser(userId, userUpdateDto);
+//              return ResponseEntity.ok(updatedUser);
+//          } catch (RuntimeException e) {
+//              return ResponseEntity.notFound().build();
+//          }
+//    }
 
-    @PutMapping("/update")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
-
-        //running updates with the try/catch statement
-           try {
-               Long userId = authenticatedUser.getUserId();
-              UserDto updatedUser = userService.updateUser(userId, userUpdateDto);
-              return ResponseEntity.ok(updatedUser);
-          } catch (RuntimeException e) {
-              return ResponseEntity.notFound().build();
-          }
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser() {
-        try {
-            Long userId = authenticatedUser.getUserId();
-            userService.deleteUser(userId);
-            return ResponseEntity.ok("Deleted!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @DeleteMapping("/delete")
+//    public ResponseEntity<?> deleteUser() {
+//        try {
+//            Long userId = authenticatedUser.getUserId();
+//            userService.deleteUser(userId);
+//            return ResponseEntity.ok("Deleted!");
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 }
