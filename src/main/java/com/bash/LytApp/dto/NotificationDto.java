@@ -1,10 +1,7 @@
 package com.bash.LytApp.dto;
 
 import com.bash.LytApp.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 
 import java.time.LocalDateTime;
 

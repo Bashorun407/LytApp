@@ -1,10 +1,13 @@
 package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.NotificationDto;
+import com.bash.LytApp.entity.User;
+import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +21,15 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<NotificationDto>> getUserNotifications(@PathVariable Long userId) {
+    @GetMapping("/user")
+    public ResponseEntity<List<NotificationDto>> getUserNotifications(@AuthenticationPrincipal UserPrincipal currentUser) {
+
+        // Security Check: Ensure filter worked
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
-            List<NotificationDto> notifications = notificationService.getUserNotifications(userId);
+            List<NotificationDto> notifications = notificationService.getUserNotifications(currentUser.getId());
             return ResponseEntity.ok(notifications);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -48,10 +56,14 @@ public class NotificationController {
         }
     }
 
-    @GetMapping("/user/{userId}/unread-count")
-    public ResponseEntity<Long> getUnreadNotificationCount(@PathVariable Long userId) {
+    @GetMapping("/user/unread-count")
+    public ResponseEntity<Long> getUnreadNotificationCount(@AuthenticationPrincipal UserPrincipal currentUser) {
+        //security check
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
-            Long count = notificationService.getUnreadNotificationCount(userId);
+            Long count = notificationService.getUnreadNotificationCount(currentUser.getId());
             return ResponseEntity.ok(count);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

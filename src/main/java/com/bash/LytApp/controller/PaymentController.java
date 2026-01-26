@@ -2,10 +2,12 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.PaymentRequestDto;
 import com.bash.LytApp.dto.PaymentResponseDto;
+import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,10 +41,15 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PaymentResponseDto>> getUserPayments(@PathVariable Long userId) {
+    @GetMapping("/user")
+    public ResponseEntity<List<PaymentResponseDto>> getUserPayments(@AuthenticationPrincipal UserPrincipal currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         try {
-            List<PaymentResponseDto> payments = paymentService.getUserPayments(userId);
+
+            List<PaymentResponseDto> payments = paymentService.getUserPayments(currentUser.getId());
             return ResponseEntity.ok(payments);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
