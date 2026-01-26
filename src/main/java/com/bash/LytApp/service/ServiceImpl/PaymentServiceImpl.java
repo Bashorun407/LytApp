@@ -75,7 +75,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Send payment confirmation notification
         String message = String.format(
-                "Payment of $%.2f for bill #%d completed successfully. Transaction ID: %s",
+                "Payment of ₦%.2f for bill #%d completed successfully. Transaction ID: %s",
                 paymentRequest.amount(),
                 bill.getId(),
                 savedPayment.getTransactionId()
@@ -114,9 +114,23 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentMapper.mapToPaymentDto(payment);
     }
 
+    //Optimized to include timestamp
     private String generateTransactionId() {
-        return "TXN" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase();
+        String timestamp = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyMMdd-HHmmss"));
+
+        String randomPart = UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 12)
+                .toUpperCase();
+
+        return "TXN-" + timestamp + "-" + randomPart;
     }
+
+//    private String generateTransactionId() {
+//        return "TXN" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase();
+//    }
 
     //Electricity Bill Provider Will generate token
     private String generateToken(){
