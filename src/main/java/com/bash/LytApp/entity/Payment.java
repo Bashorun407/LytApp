@@ -46,10 +46,6 @@ public class Payment {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    public enum PaymentStatus {
-        PENDING, COMPLETED, FAILED, REFUNDED
-    }
-
     // Constructors
     public Payment() {
         this.paidAt = LocalDateTime.now();

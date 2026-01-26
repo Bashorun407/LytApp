@@ -1,9 +1,6 @@
 package com.bash.LytApp.repository;
 
-import com.bash.LytApp.entity.Bill;
-import com.bash.LytApp.entity.Payment;
-import com.bash.LytApp.entity.Role;
-import com.bash.LytApp.entity.User;
+import com.bash.LytApp.entity.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +48,7 @@ public class PaymentRepositoryTest {
         testBill.setMeterNumber("987678998778");
         testBill.setAmount(new BigDecimal("150.00"));
         testBill.setDueDate(LocalDate.now().plusDays(15));
-        testBill.setStatus(Bill.BillStatus.UNPAID);
+        testBill.setStatus(BillStatus.UNPAID);
         entityManager.persistAndFlush(testBill);
     }
 
@@ -63,7 +60,7 @@ public class PaymentRepositoryTest {
         payment.setBill(testBill);
         payment.setAmountPaid(new BigDecimal("150.00"));
         payment.setPaymentMethod("credit_card");
-        payment.setStatus(Payment.PaymentStatus.COMPLETED);
+        payment.setStatus(PaymentStatus.COMPLETED);
         payment.setTransactionId("TXN001");
         payment.setToken("987656789122");
         entityManager.persistAndFlush(payment);
@@ -75,7 +72,7 @@ public class PaymentRepositoryTest {
         assertEquals(1, userPayments.size());
         assertEquals("TXN001", userPayments.get(0).getTransactionId());
         assertEquals("987656789122", userPayments.get(0).getToken());
-        assertEquals(Payment.PaymentStatus.COMPLETED, userPayments.get(0).getStatus());
+        assertEquals(PaymentStatus.COMPLETED, userPayments.get(0).getStatus());
     }
 
     @Test
@@ -86,7 +83,7 @@ public class PaymentRepositoryTest {
         payment.setBill(testBill);
         payment.setAmountPaid(new BigDecimal("150.00"));
         payment.setPaymentMethod("debit_card");
-        payment.setStatus(Payment.PaymentStatus.COMPLETED);
+        payment.setStatus(PaymentStatus.COMPLETED);
         payment.setTransactionId("TXN002");
         payment.setToken("987656781129");
         entityManager.persistAndFlush(payment);
@@ -108,7 +105,7 @@ public class PaymentRepositoryTest {
         payment.setBill(testBill);
         payment.setAmountPaid(new BigDecimal("150.00"));
         payment.setPaymentMethod("bank_transfer");
-        payment.setStatus(Payment.PaymentStatus.COMPLETED);
+        payment.setStatus(PaymentStatus.COMPLETED);
         payment.setTransactionId("UNIQUE_TXN_123");
         payment.setToken("987656789143");
         entityManager.persistAndFlush(payment);
@@ -119,7 +116,7 @@ public class PaymentRepositoryTest {
         // Then
         assertTrue(found.isPresent());
         assertEquals("UNIQUE_TXN_123", found.get().getTransactionId());
-        assertEquals(Payment.PaymentStatus.COMPLETED, found.get().getStatus());
+        assertEquals(PaymentStatus.COMPLETED, found.get().getStatus());
     }
 
     @Test
@@ -130,7 +127,7 @@ public class PaymentRepositoryTest {
         payment.setBill(testBill);
         payment.setAmountPaid(new BigDecimal("150.00"));
         payment.setPaymentMethod("credit_card");
-        payment.setStatus(Payment.PaymentStatus.PENDING);
+        payment.setStatus(PaymentStatus.PENDING);
         payment.setTransactionId("NEW_TXN_001");
         payment.setToken("987656785569");
 
@@ -141,7 +138,7 @@ public class PaymentRepositoryTest {
         assertNotNull(savedPayment.getId());
         assertEquals("NEW_TXN_001", savedPayment.getTransactionId());
         assertEquals("987656785569", savedPayment.getToken());
-        assertEquals(Payment.PaymentStatus.PENDING, savedPayment.getStatus());
+        assertEquals(PaymentStatus.PENDING, savedPayment.getStatus());
         assertEquals(testUser.getId(), savedPayment.getUser().getId());
         assertEquals(testBill.getId(), savedPayment.getBill().getId());
     }

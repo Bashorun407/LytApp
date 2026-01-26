@@ -29,7 +29,7 @@ class PaymentTest {
         payment.setBill(bill);
         payment.setAmountPaid(new BigDecimal("150.75"));
         payment.setPaymentMethod("credit_card");
-        payment.setStatus(Payment.PaymentStatus.COMPLETED);
+        payment.setStatus(PaymentStatus.COMPLETED);
         payment.setTransactionId("TXN123456789");
         payment.setToken("1234421434");
         payment.setPaidAt(LocalDateTime.now());
@@ -40,7 +40,7 @@ class PaymentTest {
         assertEquals(bill, payment.getBill());
         assertEquals(new BigDecimal("150.75"), payment.getAmountPaid());
         assertEquals("credit_card", payment.getPaymentMethod());
-        assertEquals(Payment.PaymentStatus.COMPLETED, payment.getStatus());
+        assertEquals(PaymentStatus.COMPLETED, payment.getStatus());
         assertEquals("TXN123456789", payment.getTransactionId());
         assertEquals("1234421434", payment.getToken());
     }
@@ -51,7 +51,7 @@ class PaymentTest {
         Payment payment = new Payment();
 
         // Then
-        assertEquals(Payment.PaymentStatus.PENDING, payment.getStatus());
+        assertEquals(PaymentStatus.PENDING, payment.getStatus());
     }
 
     @Test

@@ -2,10 +2,7 @@ package com.bash.LytApp.service.ServiceImpl;
 
 import com.bash.LytApp.dto.PaymentRequestDto;
 import com.bash.LytApp.dto.PaymentResponseDto;
-import com.bash.LytApp.entity.Bill;
-import com.bash.LytApp.entity.BillStatus;
-import com.bash.LytApp.entity.Payment;
-import com.bash.LytApp.entity.User;
+import com.bash.LytApp.entity.*;
 import com.bash.LytApp.mapper.PaymentMapper;
 import com.bash.LytApp.repository.BillRepository;
 import com.bash.LytApp.repository.PaymentRepository;
@@ -65,7 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setUser(user);
         payment.setAmountPaid(paymentRequest.amount());
         payment.setPaymentMethod(paymentRequest.paymentMethod());
-        payment.setStatus(Payment.PaymentStatus.COMPLETED);
+        payment.setStatus(PaymentStatus.COMPLETED);
         payment.setTransactionId(generateTransactionId());
         payment.setToken(generateToken());
         payment.setPaidAt(LocalDateTime.now());

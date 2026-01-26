@@ -9,7 +9,6 @@ public record AuthResponseDto(
         String role
 ) {
 
-
     // Compact canonical constructor to set default value for 'type'
     public AuthResponseDto {
         if (type == null || type.isBlank()) {
