@@ -1,7 +1,6 @@
 package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.NotificationDto;
-import com.bash.LytApp.entity.User;
 import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +36,15 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<NotificationDto> createNotification(@RequestBody NotificationDto notificationDto) {
+    public ResponseEntity<NotificationDto> createNotification(
+            @AuthenticationPrincipal UserPrincipal currentUser,
+            @RequestBody NotificationDto notificationDto) {
+        // Security Check: Ensure filter worked
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
-            NotificationDto createdNotification = notificationService.createNotification(notificationDto);
+            NotificationDto createdNotification = notificationService.createNotification(currentUser.getId(), notificationDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdNotification);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

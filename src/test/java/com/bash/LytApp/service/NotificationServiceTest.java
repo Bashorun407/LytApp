@@ -53,7 +53,7 @@ public class NotificationServiceTest {
         testNotification.setIsRead(false);
 
         testNotificationDto = new NotificationDto(
-                testUser, "email", "PAYMENT_CONFIRMATION",
+                "email", "PAYMENT_CONFIRMATION",
                 LocalDateTime.now(), false
         );
     }
@@ -86,7 +86,7 @@ public class NotificationServiceTest {
     void createNotification_WithValidData_ReturnsCreatedNotification() {
         // Given
         NotificationDto newNotificationDto = new NotificationDto(
-                testUser, "BILL_ALERT", "New bill issued", LocalDateTime.now(),  false
+                 "BILL_ALERT", "New bill issued", LocalDateTime.now(),  false
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
@@ -97,7 +97,7 @@ public class NotificationServiceTest {
         });
 
         // When
-        NotificationDto result = notificationService.createNotification(newNotificationDto);
+        NotificationDto result = notificationService.createNotification(testUser.getId(), newNotificationDto);
 
         // Then
         assertNotNull(result);
