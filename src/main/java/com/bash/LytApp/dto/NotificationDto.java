@@ -1,11 +1,13 @@
 package com.bash.LytApp.dto;
 
+import com.bash.LytApp.entity.User;
+
 
 import java.time.LocalDateTime;
 
 public record NotificationDto(
 
-        //User user,
+        User user,
         String type,
         String message,
         LocalDateTime sentAt,

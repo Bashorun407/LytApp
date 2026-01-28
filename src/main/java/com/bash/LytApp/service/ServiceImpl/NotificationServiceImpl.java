@@ -1,6 +1,7 @@
 package com.bash.LytApp.service.ServiceImpl;
 
 import com.bash.LytApp.dto.NotificationDto;
+import com.bash.LytApp.dto.UserDto;
 import com.bash.LytApp.entity.Notification;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.exception.ResourceNotFoundException;
@@ -34,9 +35,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationDto createNotification(Long userId, NotificationDto notificationDto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    public NotificationDto createNotification(NotificationDto notificationDto) {
+        User user = userRepository.findById(notificationDto.user().getId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + notificationDto.user().getId()));
 
         Notification notification = new Notification();
         notification.setUser(user);
@@ -66,8 +67,8 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendPaymentNotification(Long userId, String message) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + userId));
-        createNotification(userId,
-                new NotificationDto("PAYMENT_CONFIRMATION", message, LocalDateTime.now(), false
+        createNotification(new NotificationDto(
+                user, "PAYMENT_CONFIRMATION", message, LocalDateTime.now(), false
         ));
     }
 
@@ -75,8 +76,8 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendBillNotification(Long userId, String message) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + userId));
-        createNotification(userId,
-                new NotificationDto("BILL_ALERT", message, LocalDateTime.now(), false
+        createNotification(new NotificationDto(
+                 user, "BILL_ALERT", message, LocalDateTime.now(), false
         ));
     }
 
