@@ -6,8 +6,4 @@ Description:
 This web application will provide services to users who intend to pay light bills via web browsers.
 The goal is to provide a seamless bill payment service to users.
 
-WEELY DELIVERABLES:
-
-Week1: Setup a spring boot application using the maven build tool. (Submitted on 24th Jan 2026)
-
-Week2: Design a database schema for any domain of your choice and produce an Entity Relationship Diagram (ERD) for the database
+Automation will be implemented on bill payment later.
