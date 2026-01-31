@@ -4,6 +4,8 @@ import com.bash.LytApp.dto.PaymentRequestDto;
 import com.bash.LytApp.dto.PaymentResponseDto;
 import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.PaymentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    @Operation(summary = "Process user's payment request")
+    @ApiResponse(responseCode = "201", description = "Payment processed successfully")
     @PostMapping("/process")
     public ResponseEntity<?> processPayment(@RequestBody PaymentRequestDto paymentRequest) {
         try {
@@ -31,6 +35,8 @@ public class PaymentController {
         }
     }
 
+    @Operation(summary = "Fetches payment by payment id")
+    @ApiResponse(responseCode = "200", description = "Payment fetched successfully")
     @GetMapping("/{id}")
     public ResponseEntity<PaymentResponseDto> getPaymentById(@PathVariable Long id) {
         try {
@@ -41,6 +47,8 @@ public class PaymentController {
         }
     }
 
+    @Operation(summary = "Get payments for the logged-in user")
+    @ApiResponse(responseCode = "200", description = "Bill created successfully")
     @GetMapping("/user")
     public ResponseEntity<List<PaymentResponseDto>> getUserPayments(@AuthenticationPrincipal UserPrincipal currentUser) {
         if (currentUser == null) {
@@ -56,6 +64,8 @@ public class PaymentController {
         }
     }
 
+    @Operation(summary = "Fetch payments by bill id")
+    @ApiResponse(responseCode = "200", description = "Payments fetched successfully")
     @GetMapping("/bill/{billId}")
     public ResponseEntity<List<PaymentResponseDto>> getPaymentsByBillId(@PathVariable Long billId) {
         try {
@@ -66,6 +76,8 @@ public class PaymentController {
         }
     }
 
+    @Operation(summary = "Fetch payment by transaction id")
+    @ApiResponse(responseCode = "200", description = "Payment fetched successfully")
     @GetMapping("/transaction/{transactionId}")
     public ResponseEntity<PaymentResponseDto> getPaymentByTransactionId(@PathVariable String transactionId) {
         try {

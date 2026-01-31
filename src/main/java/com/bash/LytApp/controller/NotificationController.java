@@ -3,6 +3,8 @@ package com.bash.LytApp.controller;
 import com.bash.LytApp.dto.NotificationDto;
 import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.NotificationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
+    @Operation(summary = "Fetches all notifications for a logged-in user")
+    @ApiResponse(responseCode = "200", description = "User notifications fetched successfully")
     @GetMapping("/user")
     public ResponseEntity<List<NotificationDto>> getUserNotifications(@AuthenticationPrincipal UserPrincipal currentUser) {
 
@@ -35,6 +39,8 @@ public class NotificationController {
         }
     }
 
+    @Operation(summary = "Create notification for the logged-in user's activity")
+    @ApiResponse(responseCode = "201", description = "Notification created and sent successfully")
     @PostMapping
     public ResponseEntity<NotificationDto> createNotification(
             @AuthenticationPrincipal UserPrincipal currentUser,
@@ -51,6 +57,8 @@ public class NotificationController {
         }
     }
 
+    @Operation(summary = "Mark notification as read")
+    @ApiResponse(responseCode = "200", description = "An update has been seen by user.")
     @PutMapping("/{notificationId}/read")
     public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long notificationId) {
         try {
@@ -61,6 +69,8 @@ public class NotificationController {
         }
     }
 
+    @Operation(summary = "Fetch the number of logged-in user's unread notifications")
+    @ApiResponse(responseCode = "200", description = "Notifications are fetched successfully")
     @GetMapping("/user/unread-count")
     public ResponseEntity<Long> getUnreadNotificationCount(@AuthenticationPrincipal UserPrincipal currentUser) {
         //security check

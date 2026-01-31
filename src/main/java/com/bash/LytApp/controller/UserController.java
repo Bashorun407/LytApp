@@ -6,6 +6,8 @@ import com.bash.LytApp.dto.UserResponseDto;
 import com.bash.LytApp.dto.UserUpdateDto;
 import com.bash.LytApp.security.AuthenticatedUser;
 import com.bash.LytApp.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,8 @@ public class UserController {
         this.authenticatedUser = authenticatedUser;
     }
 
+    @Operation(summary = "Fetch all users by Admin permission")
+    @ApiResponse(responseCode = "200", description = "All users fetched successfully")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
