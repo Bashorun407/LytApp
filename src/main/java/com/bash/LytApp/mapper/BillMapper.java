@@ -20,6 +20,8 @@ public class BillMapper {
         return new BillResponseDto(
                bill.getMeterNumber(),
                bill.getAmount(),
+               bill.getStatus(),
+               bill.getIssuedAt(),
                bill.getDueDate()
         );
     }
