@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
     //GET ALL USERS
     @Override
     public List<UserResponseDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserMapper::mapToUserResponseDto).toList();
+        return userRepository.findAll().stream().map(UserMapper::mapToUserResponseDto).collect(Collectors.toList());
     }
 
     //GET USER BY ID
