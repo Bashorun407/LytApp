@@ -4,6 +4,7 @@ import com.bash.LytApp.entity.Bill;
 import com.bash.LytApp.entity.BillStatus;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.repository.projection.BillView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public class BillRepositoryTest {
         entityManager.persistAndFlush(bill2);
 
         // When
-        List<Bill> bills = billRepository.findByMeterNumber("234OL");
+        List<BillView> bills = billRepository.findByMeterNumber("234OL");
 
         // Then
         assertEquals("234OL", bills.get(0).getMeterNumber());
@@ -95,7 +96,7 @@ public class BillRepositoryTest {
         entityManager.persistAndFlush(bill2);
 
         // When
-        List<Bill> bills = billRepository.findByMeterNumber("990GH");
+        List<BillView> bills = billRepository.findByMeterNumber("990GH");
 
         // Then
         assertTrue(bills.isEmpty());
@@ -121,7 +122,7 @@ public class BillRepositoryTest {
         entityManager.persistAndFlush(bill2);
 
         // When
-        List<Bill> userBills = billRepository.findByUserId(testUser.getId());
+        List<BillView> userBills = billRepository.findByUserId(testUser.getId());
 
         // Then
         assertEquals(2, userBills.size());
@@ -151,7 +152,7 @@ public class BillRepositoryTest {
         entityManager.persistAndFlush(bill2);
 
         // When
-        List<Bill> userBills = billRepository.findByUserId(testUser.getId());
+        List<BillView> userBills = billRepository.findByUserId(testUser.getId());
 
         // Then
         assertEquals(2, userBills.size());
@@ -159,7 +160,7 @@ public class BillRepositoryTest {
         assertEquals(new BigDecimal("100.50"), userBills.get(0).getAmount());
         assertEquals(new BigDecimal("200.75"), userBills.get(1).getAmount());
         // When
-        List<Bill> bills = billRepository.findByUserId(999L);
+        List<BillView> bills = billRepository.findByUserId(999L);
 
         // Then
         assertTrue(bills.isEmpty());
@@ -185,9 +186,9 @@ public class BillRepositoryTest {
         entityManager.persistAndFlush(paidBill);
 
         // When
-        List<Bill> unpaidBills = billRepository.findByUserIdAndStatus(
+        List<BillView> unpaidBills = billRepository.findByUserIdAndStatus(
                 testUser.getId(), BillStatus.UNPAID);
-        List<Bill> paidBills = billRepository.findByUserIdAndStatus(
+        List<BillView> paidBills = billRepository.findByUserIdAndStatus(
                 testUser.getId(), BillStatus.PAID);
 
         // Then
@@ -232,7 +233,7 @@ public class BillRepositoryTest {
         entityManager.persistAndFlush(bill3);
 
         // When
-        List<Bill> unpaidBills = billRepository.findByStatus(BillStatus.UNPAID);
+        List<BillView> unpaidBills = billRepository.findByStatus(BillStatus.UNPAID);
 
         // Then
         assertEquals(2, unpaidBills.size());
