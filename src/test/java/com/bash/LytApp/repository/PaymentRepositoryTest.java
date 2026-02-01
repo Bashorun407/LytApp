@@ -1,6 +1,7 @@
 package com.bash.LytApp.repository;
 
 import com.bash.LytApp.entity.*;
+import com.bash.LytApp.repository.projection.PaymentView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class PaymentRepositoryTest {
         entityManager.persistAndFlush(payment);
 
         // When
-        List<Payment> userPayments = paymentRepository.findByUserId(testUser.getId());
+        List<PaymentView> userPayments = paymentRepository.findByUserId(testUser.getId());
 
         // Then
         assertEquals(1, userPayments.size());
@@ -89,11 +90,11 @@ public class PaymentRepositoryTest {
         entityManager.persistAndFlush(payment);
 
         // When
-        List<Payment> billPayments = paymentRepository.findByBillId(testBill.getId());
+        List<PaymentView> billPayments = paymentRepository.findByBillId(testBill.getId());
 
         // Then
         assertEquals(1, billPayments.size());
-        assertEquals(testBill.getId(), billPayments.get(0).getBill().getId());
+        assertEquals(testBill.getId(), payment.getBill().getId());
         assertEquals("debit_card", billPayments.get(0).getPaymentMethod());
     }
 
@@ -111,7 +112,7 @@ public class PaymentRepositoryTest {
         entityManager.persistAndFlush(payment);
 
         // When
-        Optional<Payment> found = paymentRepository.findByTransactionId("UNIQUE_TXN_123");
+        Optional<PaymentView> found = paymentRepository.findByTransactionId("UNIQUE_TXN_123");
 
         // Then
         assertTrue(found.isPresent());

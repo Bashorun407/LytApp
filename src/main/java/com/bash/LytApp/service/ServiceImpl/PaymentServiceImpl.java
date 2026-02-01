@@ -7,6 +7,7 @@ import com.bash.LytApp.mapper.PaymentMapper;
 import com.bash.LytApp.repository.BillRepository;
 import com.bash.LytApp.repository.PaymentRepository;
 import com.bash.LytApp.repository.UserRepository;
+import com.bash.LytApp.repository.projection.PaymentView;
 import com.bash.LytApp.service.NotificationService;
 import com.bash.LytApp.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,7 @@ public class PaymentServiceImpl implements PaymentService {
         );
         notificationService.sendPaymentNotification(user.getId(), message);
 
-        return PaymentMapper.mapToPaymentDto(savedPayment);
+        return PaymentMapper.mapToPaymentResponseDto(savedPayment);
     }
 
 
@@ -90,28 +91,28 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseDto getPaymentById(Long id) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
-        return PaymentMapper.mapToPaymentDto(payment);
+        return PaymentMapper.mapToPaymentResponseDto(payment);
     }
 
     @Override
     public List<PaymentResponseDto> getUserPayments(Long userId) {
         return paymentRepository.findByUserId(userId).stream()
-                .map(PaymentMapper::mapToPaymentDto)
+                .map(PaymentMapper::mapToPaymentResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<PaymentResponseDto> getPaymentsByBillId(Long billId) {
         return paymentRepository.findByBillId(billId).stream()
-                .map(PaymentMapper::mapToPaymentDto)
+                .map(PaymentMapper::mapToPaymentResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public PaymentResponseDto getPaymentByTransactionId(String transactionId) {
-        Payment payment = paymentRepository.findByTransactionId(transactionId)
+        PaymentView paymentView = paymentRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new RuntimeException("Payment not found with transaction ID: " + transactionId));
-        return PaymentMapper.mapToPaymentDto(payment);
+        return PaymentMapper.mapToPaymentResponseDto(paymentView);
     }
 
     //Optimized to include timestamp
