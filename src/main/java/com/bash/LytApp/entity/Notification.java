@@ -28,7 +28,6 @@ public class Notification {
     @Column(name = "is_read")
     private Boolean isRead;
 
-
     // Set default values in the constructor
     public Notification() {
         this.sentAt = LocalDateTime.now();

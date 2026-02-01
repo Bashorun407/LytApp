@@ -3,6 +3,7 @@ package com.bash.LytApp.repository;
 import com.bash.LytApp.entity.Notification;
 import com.bash.LytApp.entity.Role;
 import com.bash.LytApp.entity.User;
+import com.bash.LytApp.repository.projection.NotificationView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ public class NotificationRepositoryTest {
         entityManager.persistAndFlush(notification2);
 
         // When
-        List<Notification> notifications = notificationRepository
+        List<NotificationView> notifications = notificationRepository
                 .findByUserIdOrderBySentAtDesc(testUser.getId());
 
         // Then
@@ -89,7 +90,7 @@ public class NotificationRepositoryTest {
         entityManager.persistAndFlush(unreadNotification);
 
         // When
-        List<Notification> unreadNotifications = notificationRepository
+        List<NotificationView> unreadNotifications = notificationRepository
                 .findByUserIdAndIsReadFalse(testUser.getId());
 
         // Then
