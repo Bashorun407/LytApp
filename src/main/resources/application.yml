@@ -1,0 +1,7 @@
+
+#paystack-client:
+#  secret-key: ${PAYSTACK_SECRET_KEY}    # your secret key from env variable
+#  activate-only-clients: transaction    # optional SDK setting
+
+paystack-client:
+  secret-key: sk_test_efb080988a2d7f152c9a36e92afa1c29d85c863e
