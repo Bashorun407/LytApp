@@ -2,6 +2,7 @@ package com.bash.LytApp.controller;
 
 import com.bash.LytApp.dto.PaymentRequestDto;
 import com.bash.LytApp.dto.PaymentResponseDto;
+import com.bash.LytApp.dto.paystack.PaystackInitializeResponseDto;
 import com.bash.LytApp.security.UserPrincipal;
 import com.bash.LytApp.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,19 +21,28 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:63342")
 public class PaymentController {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @Operation(summary = "Process user's payment request")
-    @ApiResponse(responseCode = "201", description = "Payment processed successfully")
-    @PostMapping("/process")
-    public ResponseEntity<?> processPayment(@RequestBody PaymentRequestDto paymentRequest) {
-        try {
-            PaymentResponseDto paymentResponse = paymentService.processPayment(paymentRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @ApiResponse(responseCode = "201", description = "Payment initialized successfully")
+    // STEP 1: User sends Bill ID -> We return Paystack URL
+    @PostMapping("/initialize")
+    public ResponseEntity<PaystackInitializeResponseDto> initializePayment(
+            @RequestBody PaymentRequestDto request) {
+        return ResponseEntity.ok(paymentService.initPayment(request));
+    }
+
+    @Operation(summary = "Process user's payment request")
+    @ApiResponse(responseCode = "200", description = "Payment verified successfully")
+    // STEP 2: Paystack redirects here -> We verify & generate Token
+    @GetMapping("/verify/{reference}")
+    public ResponseEntity<PaymentResponseDto> verifyPayment(
+            @PathVariable String reference) {
+        return ResponseEntity.ok(paymentService.verifyAndCompletePayment(reference));
     }
 
     @Operation(summary = "Fetches payment by payment id")

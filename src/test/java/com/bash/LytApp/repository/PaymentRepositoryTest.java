@@ -112,7 +112,7 @@ public class PaymentRepositoryTest {
         entityManager.persistAndFlush(payment);
 
         // When
-        Optional<PaymentView> found = paymentRepository.findByTransactionId("UNIQUE_TXN_123");
+        Optional<Payment> found = paymentRepository.findByTransactionId("UNIQUE_TXN_123");
 
         // Then
         assertTrue(found.isPresent());

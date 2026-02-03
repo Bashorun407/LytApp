@@ -1,9 +1,7 @@
 //package com.bash.LytApp.service;
 //
-//import com.bash.LytApp.dto.UserCreateDto;
 //import com.bash.LytApp.dto.UserDto;
 //import com.bash.LytApp.dto.UserResponseDto;
-//import com.bash.LytApp.dto.UserUpdateDto;
 //import com.bash.LytApp.entity.Role;
 //import com.bash.LytApp.entity.User;
 //import com.bash.LytApp.repository.RoleRepository;
@@ -38,7 +36,7 @@
 //    private User testUser;
 //    private Role testRole;
 //    private UserDto testUserDto;
-//    private UserCreateDto testUserCreateDto;
+//
 //
 //    @BeforeEach
 //    void setUp() {
