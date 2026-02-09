@@ -22,14 +22,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class BillServiceImpl implements BillService {
 
-    @Autowired
     private BillRepository billRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private NotificationService notificationService;
+
+    public BillServiceImpl(BillRepository billRepository, UserRepository userRepository, NotificationService notificationService) {
+        this.billRepository = billRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
+    }
 
     @Override
     public BillResponseDto createBill(BillDto billDto, Long authenticatedUserId) {

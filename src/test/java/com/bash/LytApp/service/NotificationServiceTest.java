@@ -5,6 +5,7 @@ import com.bash.LytApp.entity.Notification;
 import com.bash.LytApp.entity.User;
 import com.bash.LytApp.repository.NotificationRepository;
 import com.bash.LytApp.repository.UserRepository;
+import com.bash.LytApp.repository.projection.NotificationView;
 import com.bash.LytApp.service.ServiceImpl.NotificationServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -61,25 +62,28 @@ public class NotificationServiceTest {
     @Test
     void getUserNotifications_WhenNotificationsExist_ReturnsNotificationList() {
         // Given
-        Notification notification2 = new Notification();
-        notification2.setId(2L);
-        notification2.setUser(testUser);
-        notification2.setType("BILL_ALERT");
-        notification2.setMessage("Bill due soon");
+        NotificationView notificationView1 = mock(NotificationView.class);
+        when(notificationView1.getType()).thenReturn("PAYMENT_CONFIRMATION");
+        when(notificationView1.getMessage()).thenReturn("Payment successful");
+
+        NotificationView notificationView2 = mock(NotificationView.class);
+        when(notificationView2.getType()).thenReturn("BILL_ALERT");
+        when(notificationView2.getMessage()).thenReturn("Bill due soon");
 
         when(notificationRepository.findByUserIdOrderBySentAtDesc(1L))
-                .thenReturn(Arrays.asList(testNotification, notification2));
+                .thenReturn(List.of(notificationView1, notificationView2));
 
         // When
-        List<NotificationDto> notifications = notificationService.getUserNotifications(1L);
+        List<NotificationDto> notifications =
+                notificationService.getUserNotifications(1L);
 
         // Then
         assertEquals(2, notifications.size());
         assertEquals("PAYMENT_CONFIRMATION", notifications.get(0).type());
         assertEquals("BILL_ALERT", notifications.get(1).type());
 
-        verify(notificationRepository, times(1)).findByUserIdOrderBySentAtDesc(1L);
-
+        verify(notificationRepository, times(1))
+                .findByUserIdOrderBySentAtDesc(1L);
     }
 
     @Test

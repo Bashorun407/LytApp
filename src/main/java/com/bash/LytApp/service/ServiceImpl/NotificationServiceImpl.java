@@ -20,11 +20,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class NotificationServiceImpl implements NotificationService {
 
-    @Autowired
     private NotificationRepository notificationRepository;
 
-    @Autowired
     private UserRepository userRepository;
+
+    public NotificationServiceImpl(NotificationRepository notificationRepository, UserRepository userRepository) {
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<NotificationDto> getUserNotifications(Long userId) {

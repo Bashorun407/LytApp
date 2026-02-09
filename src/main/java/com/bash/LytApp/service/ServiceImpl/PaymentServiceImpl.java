@@ -26,15 +26,24 @@ import java.util.stream.Collectors;
 @Transactional
 public class PaymentServiceImpl implements PaymentService{
 
-    @Autowired private PaymentRepository paymentRepository;
-    @Autowired private BillRepository billRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private NotificationService notificationService;
-    @Autowired private PaystackAdapter paystackAdapter; // New Dependency
-
+    private PaymentRepository paymentRepository;
+    private BillRepository billRepository;
+    private UserRepository userRepository;
+    private NotificationService notificationService;
+    private PaystackAdapter paystackAdapter; // New Dependency
     // Inject callback URL from properties
     @Value("${paystack.callback-url:http://localhost:8080/api/payments/verify}")
     private String callbackUrl;
+
+    @Autowired
+    public PaymentServiceImpl(PaymentRepository paymentRepository, BillRepository billRepository,
+                              UserRepository userRepository, NotificationService notificationService, PaystackAdapter paystackAdapter) {
+        this.paymentRepository = paymentRepository;
+        this.billRepository = billRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
+        this.paystackAdapter = paystackAdapter;
+    }
 
     // -------------------------------------------------------------------------
     // STEP 1: INITIALIZE (Get the URL)

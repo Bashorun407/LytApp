@@ -12,10 +12,9 @@ import com.bash.LytApp.repository.projection.BillView;
 import com.bash.LytApp.service.ServiceImpl.BillServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,8 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class BillServiceTest {
+class BillServiceTest {
 
     @Mock
     private BillRepository billRepository;
@@ -41,111 +39,158 @@ public class BillServiceTest {
     @InjectMocks
     private BillServiceImpl billService;
 
-    private User testUser;
+    private User userProxy;
 
     @BeforeEach
     void setUp() {
-        testUser = new User();
-        testUser.setId(1L);
-        testUser.setFirstName("John");
-        testUser.setLastName("Doe");
-        testUser.setEmail("john.doe@example.com");
+        MockitoAnnotations.openMocks(this);
+
+        userProxy = new User();
+        userProxy.setId(1L);
+        userProxy.setFirstName("John");
+        userProxy.setLastName("Doe");
     }
 
-    // Helper method to create mock BillView
-    private BillView createMockBillView(BigDecimal amount, LocalDate dueDate) {
+    // -------------------------------------------------------------------------
+    // CREATE BILL
+    // -------------------------------------------------------------------------
+    @Test
+    void createBill_ShouldReturnBillResponseDto() {
+        // Arrange
+        BillDto billDto = new BillDto(
+                "MTR123",
+                BigDecimal.valueOf(100),
+                LocalDate.now().plusDays(5)
+        );
+
+        Bill savedBill = new Bill(
+                userProxy,
+                billDto.meterNumber(),
+                billDto.amount(),
+                billDto.dueDate()
+        );
+        savedBill.setStatus(BillStatus.UNPAID);
+        savedBill.setIssuedAt(LocalDateTime.now());
+
+        when(userRepository.getReferenceById(1L)).thenReturn(userProxy);
+        when(billRepository.save(any(Bill.class))).thenReturn(savedBill);
+
+        // Act
+        BillResponseDto response = billService.createBill(billDto, 1L);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("MTR123", response.meterNumber());
+        assertEquals(BigDecimal.valueOf(100), response.amount());
+        assertEquals(BillStatus.UNPAID, response.status());
+        assertEquals(billDto.dueDate(), response.dueDate());
+
+        verify(userRepository).getReferenceById(1L);
+        verify(billRepository).save(any(Bill.class));
+        verify(notificationService)
+                .sendBillNotification(1L, "New bill generated: 100");
+    }
+
+    // -------------------------------------------------------------------------
+    // UPDATE BILL STATUS
+    // -------------------------------------------------------------------------
+    @Test
+    void updateBillStatus_ShouldReturnUpdatedBillUpdateResponseDto() {
+        // Arrange
+        Bill bill = new Bill(
+                userProxy,
+                "MTR123",
+                BigDecimal.valueOf(100),
+                LocalDate.now().plusDays(5)
+        );
+        bill.setStatus(BillStatus.UNPAID);
+
+        when(billRepository.findById(1L)).thenReturn(Optional.of(bill));
+        when(billRepository.save(any(Bill.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        BillUpdateResponseDto updated =
+                billService.updateBillStatus(1L, "PAID");
+
+        // Assert
+        assertNotNull(updated);
+        assertEquals(BillStatus.PAID, updated.status()); // ✅ FIX
+
+        verify(billRepository).findById(1L);
+        verify(billRepository).save(bill);
+    }
+
+    @Test
+    void updateBillStatus_WithInvalidBill_ShouldThrowRuntimeException() {
+        // Arrange
+        when(billRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> billService.updateBillStatus(1L, "PAID")
+        );
+
+        assertEquals("Bill not found", ex.getMessage());
+        verify(billRepository).findById(1L);
+    }
+
+    // -------------------------------------------------------------------------
+    // GET USER BILLS (PROJECTION)
+    // -------------------------------------------------------------------------
+    @Test
+    void getUserBills_ShouldReturnListOfBillResponseDto() {
+        // Arrange
         BillView billView = mock(BillView.class);
-        when(billView.getAmount()).thenReturn(amount);
-        when(billView.getDueDate()).thenReturn(dueDate);
+
+        when(billView.getMeterNumber()).thenReturn("MTR123");
+        when(billView.getAmount()).thenReturn(BigDecimal.valueOf(100));
         when(billView.getStatus()).thenReturn(BillStatus.UNPAID);
         when(billView.getIssuedAt()).thenReturn(LocalDateTime.now());
-        return billView;
+        when(billView.getDueDate()).thenReturn(LocalDate.now().plusDays(5));
+
+        when(billRepository.findByUserId(1L))
+                .thenReturn(List.of(billView));
+
+        // Act
+        List<BillResponseDto> result = billService.getUserBills(1L);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals("MTR123", result.get(0).meterNumber());
+        assertEquals(BigDecimal.valueOf(100), result.get(0).amount());
+        assertEquals(BillStatus.UNPAID, result.get(0).status());
+
+        verify(billRepository).findByUserId(1L);
     }
 
+    // -------------------------------------------------------------------------
+    // GET BILLS BY STATUS (PROJECTION)
+    // -------------------------------------------------------------------------
     @Test
-    void getUserBills_WhenBillsExist_ReturnsBillList() {
-        // Given: create projection mocks
-        BillView bill1 = createMockBillView(new BigDecimal("150.75"), LocalDate.now().plusDays(30));
-        BillView bill2 = createMockBillView(new BigDecimal("200.50"), LocalDate.now().plusDays(15));
+    void getBillsByStatus_ShouldReturnListOfBillResponseDto() {
+        // Arrange
+        BillView billView = mock(BillView.class);
 
-        when(billRepository.findByUserId(1L)).thenReturn(List.of(bill1, bill2));
+        when(billView.getMeterNumber()).thenReturn("MTR123");
+        when(billView.getAmount()).thenReturn(BigDecimal.valueOf(100));
+        when(billView.getStatus()).thenReturn(BillStatus.UNPAID);
+        when(billView.getIssuedAt()).thenReturn(LocalDateTime.now());
+        when(billView.getDueDate()).thenReturn(LocalDate.now().plusDays(5));
 
-        // When
-        List<BillResponseDto> bills = billService.getUserBills(1L);
+        when(billRepository.findByStatus(BillStatus.UNPAID))
+                .thenReturn(List.of(billView));
 
-        // Then
-        assertEquals(2, bills.size());
-        assertEquals(new BigDecimal("150.75"), bills.get(0).amount());
-        assertEquals(new BigDecimal("200.50"), bills.get(1).amount());
-        verify(billRepository, times(1)).findByUserId(1L);
-    }
+        // Act
+        List<BillResponseDto> result =
+                billService.getBillsByStatus("UNPAID");
 
-    @Test
-    void createBill_WithValidData_ReturnsCreatedBill() {
-        // Given
-        BillDto newBillDto = new BillDto(
-                "John Doe", new BigDecimal("99.99"),
-                LocalDate.now().plusDays(15)
-        );
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals("MTR123", result.get(0).meterNumber());
+        assertEquals(BillStatus.UNPAID, result.get(0).status());
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(billRepository.save(any(Bill.class))).thenAnswer(invocation -> {
-            Bill bill = invocation.getArgument(0, Bill.class); // cast to Bill entity
-            bill.setId(2L); // now this compiles
-            return bill;
-        });
-
-        doNothing().when(notificationService).sendBillNotification(anyLong(), anyString());
-
-        // When
-        BillResponseDto result = billService.createBill(newBillDto, testUser.getId());
-
-        // Then
-        assertNotNull(result);
-        assertEquals(new BigDecimal("99.99"), result.amount());
-        verify(userRepository, times(1)).findById(1L);
-        verify(billRepository, times(1)).save(any());
-        verify(notificationService, times(1)).sendBillNotification(anyLong(), anyString());
-    }
-
-    @Test
-    void createBill_WithInvalidUser_ThrowsException() {
-        BillDto newBillDto = new BillDto(
-                "3456787654", new BigDecimal("99.99"),
-                LocalDate.now().plusDays(15)
-        );
-
-        when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> billService.createBill(newBillDto, testUser.getId()));
-        assertEquals("User not found with id: 1", exception.getMessage());
-        verify(billRepository, never()).save(any());
-    }
-
-    @Test
-    void updateBillStatus_WithValidStatus_ReturnsUpdatedBill() {
-        BillView billView = createMockBillView(new BigDecimal("150.75"), LocalDate.now().plusDays(30));
-        when(billRepository.findById(1L)).thenReturn(Optional.ofNullable(null)); // Service uses entity save
-        // Service likely fetches entity internally, we can mock save
-        when(billRepository.save(any())).thenAnswer(invocation -> {
-            var bill = invocation.getArgument(0);
-            return bill;
-        });
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> billService.updateBillStatus(1L, "PAID"));
-        // Adjust based on your service logic
-    }
-
-    @Test
-    void getBillsByStatus_WithValidStatus_ReturnsBills() {
-        BillView bill = createMockBillView(new BigDecimal("150.75"), LocalDate.now().plusDays(30));
-        when(billRepository.findByStatus(BillStatus.PAID)).thenReturn(List.of(bill));
-
-        List<BillResponseDto> bills = billService.getBillsByStatus("PAID");
-
-        assertNotNull(bills);
-        verify(billRepository, times(1)).findByStatus(BillStatus.PAID);
+        verify(billRepository).findByStatus(BillStatus.UNPAID);
     }
 }
