@@ -39,9 +39,9 @@ public class PaymentController {
     @Operation(summary = "Process user's payment request")
     @ApiResponse(responseCode = "200", description = "Payment verified successfully")
     // STEP 2: Paystack redirects here -> We verify & generate Token
-    @GetMapping("/verify/{reference}")
+    @GetMapping("/verify")
     public ResponseEntity<PaymentResponseDto> verifyPayment(
-            @PathVariable String reference) {
+            @RequestParam("reference") String reference) {
         return ResponseEntity.ok(paymentService.verifyAndCompletePayment(reference));
     }
 
