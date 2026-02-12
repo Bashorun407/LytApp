@@ -1,0 +1,64 @@
+
+
+#services:
+#  mysql:
+#    image: mysql:8.0
+#    container_name: mysql-db
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: rootpassword
+#      MYSQL_DATABASE: mydb
+#      MYSQL_USER: my_user
+#      MYSQL_PASSWORD: my_password
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+#
+#  app:
+#    image: lytapp:v1
+#    container_name: elegant_moser
+#    restart: always
+#    depends_on:
+#      - mysql
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydb
+#      SPRING_DATASOURCE_USERNAME: my_user
+#      SPRING_DATASOURCE_PASSWORD: my_password
+#    ports:
+#      - "8080:8080"
+#
+#volumes:
+#  mysql_data:
+
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  app:
+    image: lytapp:v1
+    container_name: my-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:
