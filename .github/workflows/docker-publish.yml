@@ -60,5 +60,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/lytapp:latest
+            ${{ secrets.DOCKER_USERNAME }}/lytapp:v1
             ${{ secrets.DOCKER_USERNAME }}/lytapp:${{ github.sha }}
