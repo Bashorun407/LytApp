@@ -187,4 +187,7 @@ public class PaymentServiceImpl implements PaymentService{
     private String generateToken(){
         return "TOK" + UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase();
     }
+
+    //Nothing here really
 }
+
