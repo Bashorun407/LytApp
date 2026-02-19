@@ -23,8 +23,8 @@ public class PaystackAdapter {
     private static final String PAYSTACK_INIT_URL = "https://api.paystack.co/transaction/initialize";
     private static final String PAYSTACK_VERIFY_URL = "https://api.paystack.co/transaction/verify/";
 
-    public PaystackAdapter() {
-        this.restTemplate = new RestTemplate();
+    public PaystackAdapter(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public PaystackInitializeResponseDto initializeTransaction(
